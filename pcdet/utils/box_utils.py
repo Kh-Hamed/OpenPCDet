@@ -114,6 +114,34 @@ def mask_boxes_outside_range_numpy(boxes, limit_range, min_num_corners=1, use_ce
     return mask
 
 
+def filter_bboxes_in_FOV(boxes, min_angle=15, max_angle=165, use_center_to_filter=True):
+    """
+    Filter 3D bounding boxes that are within a specific angular range with respect to the x-axis.
+    
+    :param bboxes: numpy array of shape (N, 8, 3), where N is the number of bounding boxes, 
+                   and each bounding box is represented by 8 corners (x, y, z).
+    :param min_angle: minimum angle in degrees (default is 15).
+    :param max_angle: maximum angle in degrees (default is 165).
+    :return: filtered bounding boxes within the specified angular range.
+    """
+    # Convert angles to radians
+    min_angle_rad = np.deg2rad(min_angle)
+    max_angle_rad = np.deg2rad(max_angle)
+
+    if boxes.shape[1] > 7:
+        boxes = boxes[:, 0:7]
+    if use_center_to_filter:
+        box_centers = boxes[:, 0:3]
+        # Calculate the angle of each center point with respect to the x-axis
+        angles = np.arctan2(box_centers[:, 1], box_centers[:, 0])
+        angles = np.mod(angles + 2 * np.pi, 2 * np.pi)
+        
+        # Filter bounding boxes based on the angular range
+        mask = (angles >= min_angle_rad) & (angles <= max_angle_rad)
+        
+        return mask
+
+
 def remove_points_in_boxes3d(points, boxes3d):
     """
     Args:

@@ -106,8 +106,11 @@ class RoIHeadTemplate(nn.Module):
         with torch.no_grad():
             targets_dict = self.proposal_target_layer.forward(batch_dict)
 
-        rois = targets_dict['rois']  # (B, N, 7 + C)
+        rois = targets_dict['rois'].clone()  # (B, N, 7 + C)
         gt_of_rois = targets_dict['gt_of_rois']  # (B, N, 7 + C + 1)
+        #####################################################################
+        rois = rois[0:gt_of_rois.shape[0]]
+        #########################################################################
         targets_dict['gt_of_rois_src'] = gt_of_rois.clone().detach()
 
         # canonical transformation
@@ -140,7 +143,10 @@ class RoIHeadTemplate(nn.Module):
         gt_boxes3d_ct = forward_ret_dict['gt_of_rois'][..., 0:code_size]
         gt_of_rois_src = forward_ret_dict['gt_of_rois_src'][..., 0:code_size].view(-1, code_size)
         rcnn_reg = forward_ret_dict['rcnn_reg']  # (rcnn_batch_size, C)
-        roi_boxes3d = forward_ret_dict['rois']
+        # roi_boxes3d = forward_ret_dict['rois']
+        ##########################################################################################3
+        roi_boxes3d = forward_ret_dict['rois'][0:gt_boxes3d_ct.shape[0]]
+        ##########################################################################################
         rcnn_batch_size = gt_boxes3d_ct.view(-1, code_size).shape[0]
 
         fg_mask = (reg_valid_mask > 0)
@@ -217,9 +223,44 @@ class RoIHeadTemplate(nn.Module):
         tb_dict = {'rcnn_loss_cls': rcnn_loss_cls.item()}
         return rcnn_loss_cls, tb_dict
 
+#################################################################################
+    def get_DA_roi_loss(self, forward_ret_dict):
+        shared_features_DA_labels = forward_ret_dict['shared_features_DA_labels']
+        shared_features_DA_pred = forward_ret_dict['shared_features_DA_pred']
+        bc_loss = forward_ret_dict['bc_loss']
+        # loss_boundry = forward_ret_dict['loss_boundry']
+
+        # weights = self.forward_ret_dict['weights']
+        if shared_features_DA_labels == [] and shared_features_DA_pred == []:
+            batch_loss_DA = torch.tensor(0, dtype=torch.float64, device='cuda')
+            tb_dict = {'batch_loss_DA': batch_loss_DA}
+            return batch_loss_DA + bc_loss , tb_dict
+        mask = (shared_features_DA_pred != -1).float().detach()
+        # print(torch.sum(mask))
+        beta = 0.10
+        n = (mask * torch.abs(shared_features_DA_labels - shared_features_DA_pred)).squeeze(1)
+        batch_loss = torch.where(n < beta, 0.5 * (n ** 2) / beta, n - (0.5 * beta))
+        # batch_loss = batch_loss * weights.unsqueeze(1)
+        # difference = mask * (shared_features_DA_labels - shared_features_DA_pred) ** 2
+        batch_loss_DA = 1.0 * (batch_loss.sum()/torch.clamp(mask.sum(), min=1.0))
+        # if batch_loss_DA >= 0.2:
+        #     batch_loss_DA = torch.clamp(batch_loss_DA, max=0.2)
+            # batch_loss_DA = batch_loss_DA/(batch_loss_DA.detach())
+            # print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        tb_dict = {'batch_loss_DA': batch_loss_DA.item()}
+        return batch_loss_DA + bc_loss, tb_dict
+
+#################################################################################
+
     def get_loss(self, tb_dict=None):
         tb_dict = {} if tb_dict is None else tb_dict
         rcnn_loss = 0
+        #################################################################################
+        rcnn_loss_DA, cls_tb_dict = self.get_DA_roi_loss(self.forward_ret_dict)
+
+        rcnn_loss += rcnn_loss_DA
+        tb_dict.update(cls_tb_dict)
+        #################################################################################
         rcnn_loss_cls, cls_tb_dict = self.get_box_cls_layer_loss(self.forward_ret_dict)
         rcnn_loss += rcnn_loss_cls
         tb_dict.update(cls_tb_dict)

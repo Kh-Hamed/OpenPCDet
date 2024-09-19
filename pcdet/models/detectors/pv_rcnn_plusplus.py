@@ -1,4 +1,7 @@
 from .detector3d_template import Detector3DTemplate
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=UserWarning)
 
 
 class PVRCNNPlusPlus(Detector3DTemplate):

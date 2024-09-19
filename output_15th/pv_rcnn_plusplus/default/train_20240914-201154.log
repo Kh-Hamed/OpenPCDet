@@ -1,0 +1,1126 @@
+2024-09-14 20:11:54,693   INFO  **********************Start logging**********************
+2024-09-14 20:11:54,693   INFO  CUDA_VISIBLE_DEVICES=1
+2024-09-14 20:11:54,693   INFO  Training in distributed mode : total_batch_size: 6
+2024-09-14 20:11:54,693   INFO  cfg_file         /space/userfiles/khatouna/OpenPCdet_FS_DA/tools/cfgs/FS_models/pv_rcnn_plusplus.yaml
+2024-09-14 20:11:54,694   INFO  batch_size       6
+2024-09-14 20:11:54,694   INFO  epochs           80
+2024-09-14 20:11:54,694   INFO  workers          4
+2024-09-14 20:11:54,694   INFO  extra_tag        default
+2024-09-14 20:11:54,694   INFO  ckpt             None
+2024-09-14 20:11:54,694   INFO  pretrained_model None
+2024-09-14 20:11:54,694   INFO  launcher         pytorch
+2024-09-14 20:11:54,694   INFO  tcp_port         18888
+2024-09-14 20:11:54,694   INFO  sync_bn          False
+2024-09-14 20:11:54,694   INFO  fix_random_seed  False
+2024-09-14 20:11:54,694   INFO  ckpt_save_interval 1
+2024-09-14 20:11:54,694   INFO  local_rank       0
+2024-09-14 20:11:54,694   INFO  max_ckpt_save_num 5
+2024-09-14 20:11:54,694   INFO  merge_all_iters_to_one_epoch False
+2024-09-14 20:11:54,694   INFO  set_cfgs         None
+2024-09-14 20:11:54,694   INFO  max_waiting_mins 0
+2024-09-14 20:11:54,694   INFO  start_epoch      0
+2024-09-14 20:11:54,694   INFO  num_epochs_to_eval 0
+2024-09-14 20:11:54,694   INFO  save_to_file     False
+2024-09-14 20:11:54,694   INFO  use_tqdm_to_record False
+2024-09-14 20:11:54,694   INFO  logger_iter_interval 50
+2024-09-14 20:11:54,694   INFO  ckpt_save_time_interval 300
+2024-09-14 20:11:54,694   INFO  wo_gpu_stat      False
+2024-09-14 20:11:54,694   INFO  use_amp          False
+2024-09-14 20:11:54,694   INFO  cfg.ROOT_DIR: /space/userfiles/khatouna/OpenPCdet_FS_DA
+2024-09-14 20:11:54,694   INFO  cfg.LOCAL_RANK: 0
+2024-09-14 20:11:54,694   INFO  cfg.CLASS_NAMES: ['Car', 'Pedestrian', 'Bike']
+2024-09-14 20:11:54,694   INFO  ----------- DATA_CONFIG -----------
+2024-09-14 20:11:54,694   INFO  cfg.DATA_CONFIG.DATASET: FourSeasonDataset
+2024-09-14 20:11:54,694   INFO  cfg.DATA_CONFIG.DATA_PATH: /space/userfiles/khatouna/OpenPCDet_FS/data/fourseason/ImageSets/2023_late_summer
+2024-09-14 20:11:54,694   INFO  cfg.DATA_CONFIG.PATH_LIDAR: /egr/research-canvas/four_seasons/dataset/2023_late_summer/oust
+2024-09-14 20:11:54,694   INFO  cfg.DATA_CONFIG.PATH_LABEL: /egr/research-canvas/detection3d_datasets/four_seasons/imerit_check/label3d/2023_late_summer
+2024-09-14 20:11:54,695   INFO  cfg.DATA_CONFIG.DATA_PATH_T: /space/userfiles/khatouna/OpenPCDet_FS/data/fourseason/ImageSets/2022_rain
+2024-09-14 20:11:54,695   INFO  cfg.DATA_CONFIG.PATH_LIDAR_T: /egr/research-canvas/four_seasons/dataset/2022_rain/oust
+2024-09-14 20:11:54,695   INFO  cfg.DATA_CONFIG.POINT_CLOUD_RANGE: [-75.2, -75.2, -4, 75.2, 75.2, 2]
+2024-09-14 20:11:54,695   INFO  ----------- INFO_PATH -----------
+2024-09-14 20:11:54,695   INFO  cfg.DATA_CONFIG.INFO_PATH.train: ['fs_infos_train.pkl']
+2024-09-14 20:11:54,695   INFO  cfg.DATA_CONFIG.INFO_PATH.test: ['fs_infos_val.pkl']
+2024-09-14 20:11:54,695   INFO  ----------- DATA_SPLIT -----------
+2024-09-14 20:11:54,695   INFO  cfg.DATA_CONFIG.DATA_SPLIT.train: train
+2024-09-14 20:11:54,695   INFO  cfg.DATA_CONFIG.DATA_SPLIT.test: val
+2024-09-14 20:11:54,695   INFO  ----------- SAMPLED_INTERVAL -----------
+2024-09-14 20:11:54,695   INFO  cfg.DATA_CONFIG.SAMPLED_INTERVAL.train: 1
+2024-09-14 20:11:54,695   INFO  cfg.DATA_CONFIG.SAMPLED_INTERVAL.test: 1
+2024-09-14 20:11:54,695   INFO  ----------- DATA_AUGMENTOR -----------
+2024-09-14 20:11:54,695   INFO  cfg.DATA_CONFIG.DATA_AUGMENTOR.DISABLE_AUG_LIST: ['place_holder']
+2024-09-14 20:11:54,695   INFO  cfg.DATA_CONFIG.DATA_AUGMENTOR.AUG_CONFIG_LIST: [{'NAME': 'gt_sampling', 'GROUND_HEIGHT': -1.95, 'DB_INFO_PATH': ['/space/userfiles/khatouna/OpenPCDet_FS/data/fourseason/ImageSets/2023_late_summer/fs_dbinfos_train_sampled_1.pkl'], 'PREPARE': {'filter_by_min_points': ['Car:5', 'Pedestrian:5', 'Bike:5']}, 'SAMPLE_GROUPS': ['Car:20', 'Pedestrian:15', 'Bike:15'], 'NUM_POINT_FEATURES': 3, 'DATABASE_WITH_FAKELIDAR': False, 'REMOVE_EXTRA_WIDTH': [0.2, 0.2, 0.2], 'LIMIT_WHOLE_SCENE': True}, {'NAME': 'random_world_flip', 'ALONG_AXIS_LIST': ['x', 'y']}, {'NAME': 'random_world_rotation', 'WORLD_ROT_ANGLE': [-0.78539816, 0.78539816]}, {'NAME': 'random_world_scaling', 'WORLD_SCALE_RANGE': [0.99, 1.01]}]
+2024-09-14 20:11:54,695   INFO  ----------- POINT_FEATURE_ENCODING -----------
+2024-09-14 20:11:54,695   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.encoding_type: absolute_coordinates_encoding
+2024-09-14 20:11:54,695   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.used_feature_list: ['x', 'y', 'z']
+2024-09-14 20:11:54,695   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.src_feature_list: ['x', 'y', 'z']
+2024-09-14 20:11:54,695   INFO  cfg.DATA_CONFIG.DATA_PROCESSOR: [{'NAME': 'mask_points_and_boxes_outside_range', 'REMOVE_OUTSIDE_BOXES': True, 'REMOVE_OUTSIDE_FOV': True, 'MIN_POINTS_OF_GT': 5}, {'NAME': 'shuffle_points', 'SHUFFLE_ENABLED': {'train': True, 'test': False}}, {'NAME': 'transform_points_to_voxels', 'VOXEL_SIZE': [0.1, 0.1, 0.15], 'MAX_POINTS_PER_VOXEL': 5, 'MAX_NUMBER_OF_VOXELS': {'train': 80000, 'test': 90000}}]
+2024-09-14 20:11:54,695   INFO  cfg.DATA_CONFIG._BASE_CONFIG_: /space/userfiles/khatouna/OpenPCdet_FS_DA/tools/cfgs/dataset_configs/fourseason_dataset.yaml
+2024-09-14 20:11:54,695   INFO  ----------- MODEL -----------
+2024-09-14 20:11:54,695   INFO  cfg.MODEL.NAME: PVRCNNPlusPlus
+2024-09-14 20:11:54,695   INFO  ----------- VFE -----------
+2024-09-14 20:11:54,695   INFO  cfg.MODEL.VFE.NAME: MeanVFE
+2024-09-14 20:11:54,695   INFO  ----------- BACKBONE_3D -----------
+2024-09-14 20:11:54,695   INFO  cfg.MODEL.BACKBONE_3D.NAME: VoxelBackBone8x
+2024-09-14 20:11:54,695   INFO  ----------- MAP_TO_BEV -----------
+2024-09-14 20:11:54,695   INFO  cfg.MODEL.MAP_TO_BEV.NAME: HeightCompression
+2024-09-14 20:11:54,695   INFO  cfg.MODEL.MAP_TO_BEV.NUM_BEV_FEATURES: 256
+2024-09-14 20:11:54,695   INFO  ----------- BACKBONE_2D -----------
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.BACKBONE_2D.NAME: BaseBEVBackbone
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.BACKBONE_2D.LAYER_NUMS: [5, 5]
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.BACKBONE_2D.LAYER_STRIDES: [1, 2]
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.BACKBONE_2D.NUM_FILTERS: [128, 256]
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.BACKBONE_2D.UPSAMPLE_STRIDES: [1, 2]
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.BACKBONE_2D.NUM_UPSAMPLE_FILTERS: [256, 256]
+2024-09-14 20:11:54,696   INFO  ----------- DENSE_HEAD -----------
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.NAME: CenterHead
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.CLASS_AGNOSTIC: False
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.CLASS_NAMES_EACH_HEAD: [['Car', 'Pedestrian', 'Bike']]
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.SHARED_CONV_CHANNEL: 64
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.USE_BIAS_BEFORE_NORM: True
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.NUM_HM_CONV: 2
+2024-09-14 20:11:54,696   INFO  ----------- SEPARATE_HEAD_CFG -----------
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_ORDER: ['center', 'center_z', 'dim', 'rot']
+2024-09-14 20:11:54,696   INFO  ----------- HEAD_DICT -----------
+2024-09-14 20:11:54,696   INFO  ----------- center -----------
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_DICT.center.out_channels: 2
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_DICT.center.num_conv: 2
+2024-09-14 20:11:54,696   INFO  ----------- center_z -----------
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_DICT.center_z.out_channels: 1
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_DICT.center_z.num_conv: 2
+2024-09-14 20:11:54,696   INFO  ----------- dim -----------
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_DICT.dim.out_channels: 3
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_DICT.dim.num_conv: 2
+2024-09-14 20:11:54,696   INFO  ----------- rot -----------
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_DICT.rot.out_channels: 2
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_DICT.rot.num_conv: 2
+2024-09-14 20:11:54,696   INFO  ----------- TARGET_ASSIGNER_CONFIG -----------
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.FEATURE_MAP_STRIDE: 8
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.NUM_MAX_OBJS: 500
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.GAUSSIAN_OVERLAP: 0.1
+2024-09-14 20:11:54,696   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.MIN_RADIUS: 2
+2024-09-14 20:11:54,697   INFO  ----------- LOSS_CONFIG -----------
+2024-09-14 20:11:54,697   INFO  ----------- LOSS_WEIGHTS -----------
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.cls_weight: 1.0
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.loc_weight: 2.0
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.code_weights: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+2024-09-14 20:11:54,697   INFO  ----------- POST_PROCESSING -----------
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.DENSE_HEAD.POST_PROCESSING.SCORE_THRESH: 0.1
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.DENSE_HEAD.POST_PROCESSING.POST_CENTER_LIMIT_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.DENSE_HEAD.POST_PROCESSING.MAX_OBJ_PER_SAMPLE: 500
+2024-09-14 20:11:54,697   INFO  ----------- NMS_CONFIG -----------
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.DENSE_HEAD.POST_PROCESSING.NMS_CONFIG.NMS_TYPE: nms_gpu
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.DENSE_HEAD.POST_PROCESSING.NMS_CONFIG.NMS_THRESH: 0.7
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.DENSE_HEAD.POST_PROCESSING.NMS_CONFIG.NMS_PRE_MAXSIZE: 4096
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.DENSE_HEAD.POST_PROCESSING.NMS_CONFIG.NMS_POST_MAXSIZE: 500
+2024-09-14 20:11:54,697   INFO  ----------- PFE -----------
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.PFE.NAME: VoxelSetAbstraction
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.PFE.POINT_SOURCE: raw_points
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.PFE.NUM_KEYPOINTS: 4096
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.PFE.NUM_OUTPUT_FEATURES: 90
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.PFE.SAMPLE_METHOD: SPC
+2024-09-14 20:11:54,697   INFO  ----------- SPC_SAMPLING -----------
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.PFE.SPC_SAMPLING.NUM_SECTORS: 6
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.PFE.SPC_SAMPLING.SAMPLE_RADIUS_WITH_ROI: 1.6
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.PFE.FEATURES_SOURCE: ['bev', 'x_conv3', 'x_conv4', 'raw_points']
+2024-09-14 20:11:54,697   INFO  ----------- SA_LAYER -----------
+2024-09-14 20:11:54,697   INFO  ----------- raw_points -----------
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.NAME: VectorPoolAggregationModuleMSG
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.NUM_GROUPS: 2
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.LOCAL_AGGREGATION_TYPE: local_interpolation
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.NUM_REDUCED_CHANNELS: 3
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.NUM_CHANNELS_OF_LOCAL_AGGREGATION: 32
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.MSG_POST_MLPS: [32]
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.FILTER_NEIGHBOR_WITH_ROI: True
+2024-09-14 20:11:54,697   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.RADIUS_OF_NEIGHBOR_WITH_ROI: 2.4
+2024-09-14 20:11:54,698   INFO  ----------- GROUP_CFG_0 -----------
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.GROUP_CFG_0.NUM_LOCAL_VOXEL: [2, 2, 2]
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.GROUP_CFG_0.MAX_NEIGHBOR_DISTANCE: 0.2
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.GROUP_CFG_0.NEIGHBOR_NSAMPLE: -1
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.GROUP_CFG_0.POST_MLPS: [32, 32]
+2024-09-14 20:11:54,698   INFO  ----------- GROUP_CFG_1 -----------
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.GROUP_CFG_1.NUM_LOCAL_VOXEL: [3, 3, 3]
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.GROUP_CFG_1.MAX_NEIGHBOR_DISTANCE: 0.4
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.GROUP_CFG_1.NEIGHBOR_NSAMPLE: -1
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.GROUP_CFG_1.POST_MLPS: [32, 32]
+2024-09-14 20:11:54,698   INFO  ----------- x_conv3 -----------
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.DOWNSAMPLE_FACTOR: 4
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.INPUT_CHANNELS: 64
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.NAME: VectorPoolAggregationModuleMSG
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.NUM_GROUPS: 2
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.LOCAL_AGGREGATION_TYPE: local_interpolation
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.NUM_REDUCED_CHANNELS: 32
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.NUM_CHANNELS_OF_LOCAL_AGGREGATION: 32
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.MSG_POST_MLPS: [128]
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.FILTER_NEIGHBOR_WITH_ROI: True
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.RADIUS_OF_NEIGHBOR_WITH_ROI: 4.0
+2024-09-14 20:11:54,698   INFO  ----------- GROUP_CFG_0 -----------
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.GROUP_CFG_0.NUM_LOCAL_VOXEL: [3, 3, 3]
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.GROUP_CFG_0.MAX_NEIGHBOR_DISTANCE: 1.2
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.GROUP_CFG_0.NEIGHBOR_NSAMPLE: -1
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.GROUP_CFG_0.POST_MLPS: [64, 64]
+2024-09-14 20:11:54,698   INFO  ----------- GROUP_CFG_1 -----------
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.GROUP_CFG_1.NUM_LOCAL_VOXEL: [3, 3, 3]
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.GROUP_CFG_1.MAX_NEIGHBOR_DISTANCE: 2.4
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.GROUP_CFG_1.NEIGHBOR_NSAMPLE: -1
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.GROUP_CFG_1.POST_MLPS: [64, 64]
+2024-09-14 20:11:54,698   INFO  ----------- x_conv4 -----------
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.DOWNSAMPLE_FACTOR: 8
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.INPUT_CHANNELS: 64
+2024-09-14 20:11:54,698   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.NAME: VectorPoolAggregationModuleMSG
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.NUM_GROUPS: 2
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.LOCAL_AGGREGATION_TYPE: local_interpolation
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.NUM_REDUCED_CHANNELS: 32
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.NUM_CHANNELS_OF_LOCAL_AGGREGATION: 32
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.MSG_POST_MLPS: [128]
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.FILTER_NEIGHBOR_WITH_ROI: True
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.RADIUS_OF_NEIGHBOR_WITH_ROI: 6.4
+2024-09-14 20:11:54,699   INFO  ----------- GROUP_CFG_0 -----------
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.GROUP_CFG_0.NUM_LOCAL_VOXEL: [3, 3, 3]
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.GROUP_CFG_0.MAX_NEIGHBOR_DISTANCE: 2.4
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.GROUP_CFG_0.NEIGHBOR_NSAMPLE: -1
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.GROUP_CFG_0.POST_MLPS: [64, 64]
+2024-09-14 20:11:54,699   INFO  ----------- GROUP_CFG_1 -----------
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.GROUP_CFG_1.NUM_LOCAL_VOXEL: [3, 3, 3]
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.GROUP_CFG_1.MAX_NEIGHBOR_DISTANCE: 4.8
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.GROUP_CFG_1.NEIGHBOR_NSAMPLE: -1
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.GROUP_CFG_1.POST_MLPS: [64, 64]
+2024-09-14 20:11:54,699   INFO  ----------- POINT_HEAD -----------
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.POINT_HEAD.NAME: PointHeadSimple
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.POINT_HEAD.CLS_FC: [256, 256]
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.POINT_HEAD.CLASS_AGNOSTIC: True
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.POINT_HEAD.USE_POINT_FEATURES_BEFORE_FUSION: True
+2024-09-14 20:11:54,699   INFO  ----------- TARGET_CONFIG -----------
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.POINT_HEAD.TARGET_CONFIG.GT_EXTRA_WIDTH: [0.2, 0.2, 0.2]
+2024-09-14 20:11:54,699   INFO  ----------- LOSS_CONFIG -----------
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_REG: smooth-l1
+2024-09-14 20:11:54,699   INFO  ----------- LOSS_WEIGHTS -----------
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.point_cls_weight: 1.0
+2024-09-14 20:11:54,699   INFO  ----------- ROI_HEAD -----------
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.ROI_HEAD.NAME: PVRCNNHeadBaseline
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.ROI_HEAD.CLASS_AGNOSTIC: True
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.ROI_HEAD.SHARED_FC: [256, 256]
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.ROI_HEAD.CLS_FC: [256, 256]
+2024-09-14 20:11:54,699   INFO  cfg.MODEL.ROI_HEAD.REG_FC: [256, 256]
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.DP_RATIO: 0.3
+2024-09-14 20:11:54,700   INFO  ----------- NMS_CONFIG -----------
+2024-09-14 20:11:54,700   INFO  ----------- TRAIN -----------
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_TYPE: nms_gpu
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.MULTI_CLASSES_NMS: False
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_PRE_MAXSIZE: 9000
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_POST_MAXSIZE: 512
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_THRESH: 0.8
+2024-09-14 20:11:54,700   INFO  ----------- TEST -----------
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_TYPE: nms_gpu
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.MULTI_CLASSES_NMS: False
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_PRE_MAXSIZE: 1024
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_POST_MAXSIZE: 100
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_THRESH: 0.7
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.SCORE_THRESH: 0.1
+2024-09-14 20:11:54,700   INFO  ----------- ROI_GRID_POOL -----------
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GRID_SIZE: 6
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.NAME: VectorPoolAggregationModuleMSG
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.NUM_GROUPS: 2
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.LOCAL_AGGREGATION_TYPE: voxel_random_choice
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.NUM_REDUCED_CHANNELS: 30
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.NUM_CHANNELS_OF_LOCAL_AGGREGATION: 32
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.MSG_POST_MLPS: [128]
+2024-09-14 20:11:54,700   INFO  ----------- GROUP_CFG_0 -----------
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GROUP_CFG_0.NUM_LOCAL_VOXEL: [3, 3, 3]
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GROUP_CFG_0.MAX_NEIGHBOR_DISTANCE: 0.8
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GROUP_CFG_0.NEIGHBOR_NSAMPLE: 32
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GROUP_CFG_0.POST_MLPS: [64, 64]
+2024-09-14 20:11:54,700   INFO  ----------- GROUP_CFG_1 -----------
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GROUP_CFG_1.NUM_LOCAL_VOXEL: [3, 3, 3]
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GROUP_CFG_1.MAX_NEIGHBOR_DISTANCE: 1.6
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GROUP_CFG_1.NEIGHBOR_NSAMPLE: 32
+2024-09-14 20:11:54,700   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GROUP_CFG_1.POST_MLPS: [64, 64]
+2024-09-14 20:11:54,701   INFO  ----------- TARGET_CONFIG -----------
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.BOX_CODER: ResidualCoder
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.ROI_PER_IMAGE: 128
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.FG_RATIO: 0.5
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.SAMPLE_ROI_BY_EACH_CLASS: True
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_SCORE_TYPE: roi_iou
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_FG_THRESH: 0.75
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_BG_THRESH: 0.25
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_BG_THRESH_LO: 0.1
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.HARD_BG_RATIO: 0.8
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.REG_FG_THRESH: 0.55
+2024-09-14 20:11:54,701   INFO  ----------- LOSS_CONFIG -----------
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.CLS_LOSS: BinaryCrossEntropy
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.REG_LOSS: smooth-l1
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.CORNER_LOSS_REGULARIZATION: True
+2024-09-14 20:11:54,701   INFO  ----------- LOSS_WEIGHTS -----------
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_cls_weight: 1.0
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_reg_weight: 1.0
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_corner_weight: 1.0
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.code_weights: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+2024-09-14 20:11:54,701   INFO  ----------- POST_PROCESSING -----------
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.POST_PROCESSING.RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.POST_PROCESSING.SCORE_THRESH: 0.2
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.POST_PROCESSING.OUTPUT_RAW_SCORE: False
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.POST_PROCESSING.EVAL_METRIC: kitti
+2024-09-14 20:11:54,701   INFO  ----------- NMS_CONFIG -----------
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.MULTI_CLASSES_NMS: False
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_TYPE: nms_gpu
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_THRESH: 0.1
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_PRE_MAXSIZE: 4096
+2024-09-14 20:11:54,701   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_POST_MAXSIZE: 500
+2024-09-14 20:11:54,701   INFO  ----------- OPTIMIZATION -----------
+2024-09-14 20:11:54,702   INFO  cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU: 6
+2024-09-14 20:11:54,702   INFO  cfg.OPTIMIZATION.NUM_EPOCHS: 80
+2024-09-14 20:11:54,702   INFO  cfg.OPTIMIZATION.OPTIMIZER: adam_onecycle
+2024-09-14 20:11:54,702   INFO  cfg.OPTIMIZATION.LR: 0.01
+2024-09-14 20:11:54,702   INFO  cfg.OPTIMIZATION.WEIGHT_DECAY: 0.001
+2024-09-14 20:11:54,702   INFO  cfg.OPTIMIZATION.MOMENTUM: 0.9
+2024-09-14 20:11:54,702   INFO  cfg.OPTIMIZATION.MOMS: [0.95, 0.85]
+2024-09-14 20:11:54,702   INFO  cfg.OPTIMIZATION.PCT_START: 0.4
+2024-09-14 20:11:54,702   INFO  cfg.OPTIMIZATION.DIV_FACTOR: 10
+2024-09-14 20:11:54,702   INFO  cfg.OPTIMIZATION.DECAY_STEP_LIST: [35, 45]
+2024-09-14 20:11:54,702   INFO  cfg.OPTIMIZATION.LR_DECAY: 0.1
+2024-09-14 20:11:54,702   INFO  cfg.OPTIMIZATION.LR_CLIP: 1e-07
+2024-09-14 20:11:54,702   INFO  cfg.OPTIMIZATION.LR_WARMUP: False
+2024-09-14 20:11:54,702   INFO  cfg.OPTIMIZATION.WARMUP_EPOCH: 1
+2024-09-14 20:11:54,702   INFO  cfg.OPTIMIZATION.GRAD_NORM_CLIP: 10
+2024-09-14 20:11:54,702   INFO  cfg.TAG: pv_rcnn_plusplus
+2024-09-14 20:11:54,702   INFO  cfg.EXP_GROUP_PATH: 
+2024-09-14 20:11:54,720   INFO  ----------- Create dataloader & network & optimizer -----------
+2024-09-14 20:11:54,760   INFO  Database filter by min points Car: 7724 => 7037
+2024-09-14 20:11:54,762   INFO  Database filter by min points Pedestrian: 2067 => 1841
+2024-09-14 20:11:54,763   INFO  Database filter by min points Bike: 601 => 504
+2024-09-14 20:11:54,807   INFO  Database filter by min points Car: 7724 => 7037
+2024-09-14 20:11:54,810   INFO  Database filter by min points Pedestrian: 2067 => 1841
+2024-09-14 20:11:54,810   INFO  Database filter by min points Bike: 601 => 504
+2024-09-14 20:11:54,813   INFO  Loading Fourseason dataset
+2024-09-14 20:11:54,827   INFO  Total samples for Fourseason dataset: 2167
+2024-09-14 20:11:54,827   INFO  Loading Fourseason dataset
+2024-09-14 20:11:54,836   INFO  Total samples for Fourseason dataset: 2167
+2024-09-14 20:11:54,999   INFO  ==> Loading parameters from checkpoint /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model.pth to CPU
+2024-09-14 20:11:55,130   INFO  ==> Loading optimizer parameters from checkpoint /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model.pth to CPU
+2024-09-14 20:11:55,150   INFO  ==> Done
+2024-09-14 20:11:55,380   INFO  ----------- Model PVRCNNPlusPlus created, param count: 14247289 -----------
+2024-09-14 20:11:55,380   INFO  DistributedDataParallel(
+  (module): PVRCNNPlusPlus(
+    (vfe): MeanVFE()
+    (backbone_3d): VoxelBackBone8x(
+      (conv_input): SparseSequential(
+        (0): SubMConv3d(3, 16, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (1): BatchNorm1d(16, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+      (conv1): SparseSequential(
+        (0): SparseSequential(
+          (0): SubMConv3d(16, 16, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(16, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (conv2): SparseSequential(
+        (0): SparseSequential(
+          (0): SparseConv3d(16, 32, kernel_size=[3, 3, 3], stride=[2, 2, 2], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (1): SparseSequential(
+          (0): SubMConv3d(32, 32, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (2): SparseSequential(
+          (0): SubMConv3d(32, 32, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (conv3): SparseSequential(
+        (0): SparseSequential(
+          (0): SparseConv3d(32, 64, kernel_size=[3, 3, 3], stride=[2, 2, 2], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (1): SparseSequential(
+          (0): SubMConv3d(64, 64, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (2): SparseSequential(
+          (0): SubMConv3d(64, 64, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (conv4): SparseSequential(
+        (0): SparseSequential(
+          (0): SparseConv3d(64, 64, kernel_size=[3, 3, 3], stride=[2, 2, 2], padding=[0, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (1): SparseSequential(
+          (0): SubMConv3d(64, 64, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (2): SparseSequential(
+          (0): SubMConv3d(64, 64, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (conv_out): SparseSequential(
+        (0): SparseConv3d(64, 128, kernel_size=[3, 1, 1], stride=[2, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (1): BatchNorm1d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+    )
+    (map_to_bev_module): HeightCompression()
+    (pfe): VoxelSetAbstraction(
+      (SA_layers): ModuleList(
+        (0): VectorPoolAggregationModuleMSG(
+          (layer_0): VectorPoolAggregationModule(
+            radius=1.2, local_voxels=([3, 3, 3], local_aggregation_type=local_interpolation, num_c_reduction=64->32, num_c_local_aggregation=32
+            (local_interpolate_module): VectorPoolLocalInterpolateModule()
+            (separate_local_aggregation_layer): Sequential(
+              (0): Conv1d(1107, 864, kernel_size=(1,), stride=(1,), groups=27, bias=False)
+              (1): BatchNorm1d(864, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (post_mlps): Sequential(
+              (0): Conv1d(864, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+              (3): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (4): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (5): ReLU()
+            )
+          )
+          (layer_1): VectorPoolAggregationModule(
+            radius=2.4, local_voxels=([3, 3, 3], local_aggregation_type=local_interpolation, num_c_reduction=64->32, num_c_local_aggregation=32
+            (local_interpolate_module): VectorPoolLocalInterpolateModule()
+            (separate_local_aggregation_layer): Sequential(
+              (0): Conv1d(1107, 864, kernel_size=(1,), stride=(1,), groups=27, bias=False)
+              (1): BatchNorm1d(864, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (post_mlps): Sequential(
+              (0): Conv1d(864, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+              (3): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (4): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (5): ReLU()
+            )
+          )
+          (msg_post_mlps): Sequential(
+            (0): Conv1d(131, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+        )
+        (1): VectorPoolAggregationModuleMSG(
+          (layer_0): VectorPoolAggregationModule(
+            radius=2.4, local_voxels=([3, 3, 3], local_aggregation_type=local_interpolation, num_c_reduction=64->32, num_c_local_aggregation=32
+            (local_interpolate_module): VectorPoolLocalInterpolateModule()
+            (separate_local_aggregation_layer): Sequential(
+              (0): Conv1d(1107, 864, kernel_size=(1,), stride=(1,), groups=27, bias=False)
+              (1): BatchNorm1d(864, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (post_mlps): Sequential(
+              (0): Conv1d(864, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+              (3): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (4): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (5): ReLU()
+            )
+          )
+          (layer_1): VectorPoolAggregationModule(
+            radius=4.8, local_voxels=([3, 3, 3], local_aggregation_type=local_interpolation, num_c_reduction=64->32, num_c_local_aggregation=32
+            (local_interpolate_module): VectorPoolLocalInterpolateModule()
+            (separate_local_aggregation_layer): Sequential(
+              (0): Conv1d(1107, 864, kernel_size=(1,), stride=(1,), groups=27, bias=False)
+              (1): BatchNorm1d(864, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (post_mlps): Sequential(
+              (0): Conv1d(864, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+              (3): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (4): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (5): ReLU()
+            )
+          )
+          (msg_post_mlps): Sequential(
+            (0): Conv1d(131, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+        )
+      )
+      (SA_rawpoints): VectorPoolAggregationModuleMSG(
+        (layer_0): VectorPoolAggregationModule(
+          radius=0.2, local_voxels=([2, 2, 2], local_aggregation_type=local_interpolation, num_c_reduction=0->3, num_c_local_aggregation=32
+          (local_interpolate_module): VectorPoolLocalInterpolateModule()
+          (separate_local_aggregation_layer): Sequential(
+            (0): Conv1d(96, 256, kernel_size=(1,), stride=(1,), groups=8, bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+          (post_mlps): Sequential(
+            (0): Conv1d(256, 32, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv1d(32, 32, kernel_size=(1,), stride=(1,), bias=False)
+            (4): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+          )
+        )
+        (layer_1): VectorPoolAggregationModule(
+          radius=0.4, local_voxels=([3, 3, 3], local_aggregation_type=local_interpolation, num_c_reduction=0->3, num_c_local_aggregation=32
+          (local_interpolate_module): VectorPoolLocalInterpolateModule()
+          (separate_local_aggregation_layer): Sequential(
+            (0): Conv1d(324, 864, kernel_size=(1,), stride=(1,), groups=27, bias=False)
+            (1): BatchNorm1d(864, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+          (post_mlps): Sequential(
+            (0): Conv1d(864, 32, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv1d(32, 32, kernel_size=(1,), stride=(1,), bias=False)
+            (4): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+          )
+        )
+        (msg_post_mlps): Sequential(
+          (0): Conv1d(67, 32, kernel_size=(1,), stride=(1,), bias=False)
+          (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (vsa_point_feature_fusion): Sequential(
+        (0): Linear(in_features=544, out_features=90, bias=False)
+        (1): BatchNorm1d(90, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+    )
+    (backbone_2d): BaseBEVBackbone(
+      (blocks): ModuleList(
+        (0): Sequential(
+          (0): ZeroPad2d((1, 1, 1, 1))
+          (1): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), bias=False)
+          (2): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (3): ReLU()
+          (4): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (5): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (6): ReLU()
+          (7): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (8): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (9): ReLU()
+          (10): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (11): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (12): ReLU()
+          (13): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (14): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (15): ReLU()
+          (16): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (17): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (18): ReLU()
+        )
+        (1): Sequential(
+          (0): ZeroPad2d((1, 1, 1, 1))
+          (1): Conv2d(128, 256, kernel_size=(3, 3), stride=(2, 2), bias=False)
+          (2): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (3): ReLU()
+          (4): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (5): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (6): ReLU()
+          (7): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (8): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (9): ReLU()
+          (10): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (11): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (12): ReLU()
+          (13): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (14): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (15): ReLU()
+          (16): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (17): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (18): ReLU()
+        )
+      )
+      (deblocks): ModuleList(
+        (0): Sequential(
+          (0): ConvTranspose2d(128, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (1): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (1): Sequential(
+          (0): ConvTranspose2d(256, 256, kernel_size=(2, 2), stride=(2, 2), bias=False)
+          (1): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+    )
+    (dense_head): CenterHead(
+      (shared_conv): Sequential(
+        (0): Conv2d(512, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+      (heads_list): ModuleList(
+        (0): SeparateHead(
+          (center): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 2, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (center_z): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 1, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (dim): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (rot): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 2, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (hm): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+        )
+      )
+      (hm_loss_func): FocalLossCenterNet()
+      (reg_loss_func): RegLossCenterNet()
+    )
+    (point_head): PointHeadSimple(
+      (cls_loss_func): SigmoidFocalClassificationLoss()
+      (cls_layers): Sequential(
+        (0): Linear(in_features=544, out_features=256, bias=False)
+        (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+        (3): Linear(in_features=256, out_features=256, bias=False)
+        (4): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (5): ReLU()
+        (6): Linear(in_features=256, out_features=1, bias=True)
+      )
+    )
+    (roi_head): PVRCNNHeadBaseline(
+      (proposal_target_layer): ProposalTargetLayer()
+      (reg_loss_func): WeightedSmoothL1Loss()
+      (roi_grid_pool_layer): VectorPoolAggregationModuleMSG(
+        (layer_0): VectorPoolAggregationModule(
+          radius=0.8, local_voxels=([3, 3, 3], local_aggregation_type=voxel_random_choice, num_c_reduction=90->30, num_c_local_aggregation=32
+          (separate_local_aggregation_layer): Sequential(
+            (0): Conv1d(891, 864, kernel_size=(1,), stride=(1,), groups=27, bias=False)
+            (1): BatchNorm1d(864, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+          (post_mlps): Sequential(
+            (0): Conv1d(864, 64, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+            (4): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+          )
+        )
+        (layer_1): VectorPoolAggregationModule(
+          radius=1.6, local_voxels=([3, 3, 3], local_aggregation_type=voxel_random_choice, num_c_reduction=90->30, num_c_local_aggregation=32
+          (separate_local_aggregation_layer): Sequential(
+            (0): Conv1d(891, 864, kernel_size=(1,), stride=(1,), groups=27, bias=False)
+            (1): BatchNorm1d(864, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+          (post_mlps): Sequential(
+            (0): Conv1d(864, 64, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+            (4): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+          )
+        )
+        (msg_post_mlps): Sequential(
+          (0): Conv1d(131, 128, kernel_size=(1,), stride=(1,), bias=False)
+          (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (shared_fc_layer): Sequential(
+        (0): Conv1d(27648, 256, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+        (3): Dropout(p=0.3, inplace=False)
+        (4): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+        (5): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (6): ReLU()
+      )
+      (cls_layers): Sequential(
+        (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+        (3): Dropout(p=0.3, inplace=False)
+        (4): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+        (5): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (6): ReLU()
+        (7): Conv1d(256, 1, kernel_size=(1,), stride=(1,))
+      )
+      (reg_layers): Sequential(
+        (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+        (3): Dropout(p=0.3, inplace=False)
+        (4): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+        (5): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (6): ReLU()
+        (7): Conv1d(256, 7, kernel_size=(1,), stride=(1,))
+      )
+      (binary_classifier): Sequential(
+        (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+        (3): Dropout(p=0.3, inplace=False)
+        (4): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+        (5): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (6): ReLU()
+        (7): Conv1d(256, 1, kernel_size=(1,), stride=(1,))
+      )
+    )
+  )
+)
+2024-09-14 20:11:55,384   INFO  **********************Start training /pv_rcnn_plusplus(default)**********************
+2024-09-14 20:13:00,524   INFO  Train:   56/80 ( 70%) [ 182/362 ( 50%)]  Loss: 3.171 (3.17)  LR: 5.163e-03  Time cost: 00:25/1:17:24 [01:05/63:33:43]  Acc_iter 20093       Data time: 0.77(0.77)  Forward time: 25.03(25.03)  Batch time: 25.80(25.80)
+2024-09-14 20:13:13,288   INFO  Train:   56/80 ( 70%) [ 189/362 ( 52%)]  Loss: 3.408 (3.45)  LR: 5.156e-03  Time cost: 00:38/13:54 [01:17/11:51:58]  Acc_iter 20100       Data time: 0.13(0.21)  Forward time: 1.81(4.59)  Batch time: 1.95(4.80)
+2024-09-14 20:13:13,376   INFO  
+2024-09-14 20:14:38,520   INFO  Train:   56/80 ( 70%) [ 239/362 ( 66%)]  Loss: 3.544 (3.47)  LR: 5.111e-03  Time cost: 02:03/04:22 [02:43/5:13:26]  Acc_iter 20150       Data time: 0.12(0.15)  Forward time: 1.65(1.98)  Batch time: 1.76(2.13)
+2024-09-14 20:16:00,265   INFO  Train:   56/80 ( 70%) [ 289/362 ( 80%)]  Loss: 3.363 (3.47)  LR: 5.066e-03  Time cost: 03:25/02:18 [04:04/4:37:53]  Acc_iter 20200       Data time: 0.14(0.15)  Forward time: 1.27(1.75)  Batch time: 1.40(1.90)
+2024-09-14 20:17:22,765   INFO  Train:   56/80 ( 70%) [ 339/362 ( 94%)]  Loss: 3.454 (3.49)  LR: 5.021e-03  Time cost: 04:48/00:41 [05:27/4:24:40]  Acc_iter 20250       Data time: 0.15(0.14)  Forward time: 1.72(1.68)  Batch time: 1.86(1.82)
+2024-09-14 20:17:22,887   INFO  
+2024-09-14 20:17:36,626   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 20:18:00,772   INFO  Train:   56/80 ( 70%) [ 361/362 (100%)]  Loss: 3.608 (3.50)  LR: 5.001e-03  Time cost: 05:26/00:01 [06:05/4:22:19]  Acc_iter 20272       Data time: 0.14(0.15)  Forward time: 1.43(1.66)  Batch time: 1.57(1.81)
+2024-09-14 20:18:28,798   INFO  Train:   57/80 ( 71%) [   0/362 (  0%)]  Loss: 3.345 (3.35)  LR: 5.000e-03  Time cost: 00:02/17:47 [06:33/7:06:48]  Acc_iter 20273       Data time: 0.78(0.78)  Forward time: 2.00(2.00)  Batch time: 2.77(2.77)
+2024-09-14 20:19:14,004   INFO  Train:   57/80 ( 71%) [  27/362 (  7%)]  Loss: 3.515 (3.53)  LR: 4.976e-03  Time cost: 00:48/09:36 [07:18/4:08:14]  Acc_iter 20300       Data time: 0.13(0.17)  Forward time: 1.37(1.55)  Batch time: 1.51(1.72)
+2024-09-14 20:20:37,866   INFO  Train:   57/80 ( 71%) [  77/362 ( 21%)]  Loss: 3.268 (3.50)  LR: 4.930e-03  Time cost: 02:12/08:02 [08:42/4:02:54]  Acc_iter 20350       Data time: 0.14(0.15)  Forward time: 1.40(1.54)  Batch time: 1.54(1.69)
+2024-09-14 20:21:58,971   INFO  Train:   57/80 ( 71%) [ 127/362 ( 35%)]  Loss: 3.728 (3.50)  LR: 4.885e-03  Time cost: 03:33/06:31 [10:03/3:57:34]  Acc_iter 20400       Data time: 0.17(0.15)  Forward time: 1.47(1.52)  Batch time: 1.64(1.66)
+2024-09-14 20:21:59,158   INFO  
+2024-09-14 20:23:23,177   INFO  Train:   57/80 ( 71%) [ 177/362 ( 49%)]  Loss: 3.415 (3.51)  LR: 4.840e-03  Time cost: 04:57/05:09 [11:27/3:56:56]  Acc_iter 20450       Data time: 0.13(0.15)  Forward time: 1.64(1.52)  Batch time: 1.77(1.67)
+2024-09-14 20:23:26,710   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 20:24:48,998   INFO  Train:   57/80 ( 71%) [ 227/362 ( 63%)]  Loss: 3.447 (3.51)  LR: 4.795e-03  Time cost: 06:23/03:46 [12:53/3:56:58]  Acc_iter 20500       Data time: 0.13(0.15)  Forward time: 1.43(1.53)  Batch time: 1.57(1.68)
+2024-09-14 20:26:11,371   INFO  Train:   57/80 ( 71%) [ 277/362 ( 77%)]  Loss: 3.470 (3.50)  LR: 4.750e-03  Time cost: 07:45/02:22 [14:15/3:54:44]  Acc_iter 20550       Data time: 0.13(0.15)  Forward time: 1.52(1.53)  Batch time: 1.65(1.67)
+2024-09-14 20:26:11,513   INFO  
+2024-09-14 20:27:36,329   INFO  Train:   57/80 ( 71%) [ 327/362 ( 90%)]  Loss: 3.572 (3.50)  LR: 4.705e-03  Time cost: 09:10/00:58 [15:40/3:53:52]  Acc_iter 20600       Data time: 0.16(0.15)  Forward time: 1.42(1.53)  Batch time: 1.59(1.68)
+2024-09-14 20:28:27,716   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 20:28:33,114   INFO  Train:   57/80 ( 71%) [ 361/362 (100%)]  Loss: 3.388 (3.50)  LR: 4.674e-03  Time cost: 10:07/00:01 [16:37/3:52:48]  Acc_iter 20634       Data time: 0.13(0.15)  Forward time: 0.36(1.53)  Batch time: 0.49(1.68)
+2024-09-14 20:29:02,697   INFO  Train:   58/80 ( 72%) [   0/362 (  0%)]  Loss: 3.237 (3.24)  LR: 4.673e-03  Time cost: 00:02/15:41 [17:07/6:00:43]  Acc_iter 20635       Data time: 0.76(0.76)  Forward time: 1.70(1.70)  Batch time: 2.46(2.46)
+2024-09-14 20:29:27,321   INFO  Train:   58/80 ( 72%) [  15/362 (  4%)]  Loss: 3.102 (3.49)  LR: 4.660e-03  Time cost: 00:27/09:50 [17:31/3:55:40]  Acc_iter 20650       Data time: 0.13(0.18)  Forward time: 1.73(1.52)  Batch time: 1.87(1.69)
+2024-09-14 20:30:49,588   INFO  Train:   58/80 ( 72%) [  65/362 ( 18%)]  Loss: 3.278 (3.50)  LR: 4.614e-03  Time cost: 01:49/08:12 [18:54/3:48:24]  Acc_iter 20700       Data time: 0.13(0.15)  Forward time: 1.51(1.51)  Batch time: 1.64(1.66)
+2024-09-14 20:30:49,737   INFO  
+2024-09-14 20:32:12,261   INFO  Train:   58/80 ( 72%) [ 115/362 ( 32%)]  Loss: 3.799 (3.49)  LR: 4.569e-03  Time cost: 03:12/06:49 [20:16/3:46:42]  Acc_iter 20750       Data time: 0.13(0.15)  Forward time: 1.44(1.51)  Batch time: 1.57(1.66)
+2024-09-14 20:33:37,934   INFO  Train:   58/80 ( 72%) [ 165/362 ( 46%)]  Loss: 3.527 (3.50)  LR: 4.524e-03  Time cost: 04:37/05:29 [21:42/3:47:39]  Acc_iter 20800       Data time: 0.15(0.15)  Forward time: 1.51(1.53)  Batch time: 1.66(1.67)
+2024-09-14 20:34:01,770   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 20:35:03,286   INFO  Train:   58/80 ( 72%) [ 215/362 ( 59%)]  Loss: 3.369 (3.49)  LR: 4.479e-03  Time cost: 06:03/04:07 [23:07/3:47:18]  Acc_iter 20850       Data time: 0.14(0.15)  Forward time: 1.74(1.53)  Batch time: 1.89(1.68)
+2024-09-14 20:35:03,498   INFO  
+2024-09-14 20:36:25,423   INFO  Train:   58/80 ( 72%) [ 265/362 ( 73%)]  Loss: 3.650 (3.49)  LR: 4.434e-03  Time cost: 07:25/02:42 [24:30/3:44:55]  Acc_iter 20900       Data time: 0.15(0.15)  Forward time: 1.95(1.53)  Batch time: 2.10(1.67)
+2024-09-14 20:37:49,258   INFO  Train:   58/80 ( 72%) [ 315/362 ( 87%)]  Loss: 3.734 (3.49)  LR: 4.390e-03  Time cost: 08:49/01:18 [25:53/3:43:34]  Acc_iter 20950       Data time: 0.13(0.15)  Forward time: 1.55(1.53)  Batch time: 1.68(1.67)
+2024-09-14 20:39:02,071   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 20:39:05,726   INFO  Train:   58/80 ( 72%) [ 361/362 (100%)]  Loss: 4.892 (3.49)  LR: 4.348e-03  Time cost: 10:05/00:01 [27:10/3:42:05]  Acc_iter 20996       Data time: 0.15(0.15)  Forward time: 0.33(1.53)  Batch time: 0.47(1.67)
+2024-09-14 20:39:33,811   INFO  Train:   59/80 ( 74%) [   0/362 (  0%)]  Loss: 3.330 (3.33)  LR: 4.347e-03  Time cost: 00:02/14:10 [27:38/5:12:01]  Acc_iter 20997       Data time: 0.63(0.63)  Forward time: 1.60(1.60)  Batch time: 2.22(2.22)
+2024-09-14 20:39:38,645   INFO  Train:   59/80 ( 74%) [   3/362 (  1%)]  Loss: 3.288 (3.41)  LR: 4.345e-03  Time cost: 00:07/10:44 [27:43/3:58:19]  Acc_iter 21000       Data time: 0.12(0.25)  Forward time: 1.63(1.50)  Batch time: 1.75(1.76)
+2024-09-14 20:39:38,812   INFO  
+2024-09-14 20:41:02,369   INFO  Train:   59/80 ( 74%) [  53/362 ( 15%)]  Loss: 3.470 (3.50)  LR: 4.300e-03  Time cost: 01:30/08:40 [29:06/3:41:58]  Acc_iter 21050       Data time: 0.12(0.15)  Forward time: 1.90(1.53)  Batch time: 2.03(1.68)
+2024-09-14 20:42:26,866   INFO  Train:   59/80 ( 74%) [ 103/362 ( 28%)]  Loss: 3.430 (3.50)  LR: 4.255e-03  Time cost: 02:55/07:16 [30:31/3:40:58]  Acc_iter 21100       Data time: 0.17(0.15)  Forward time: 1.39(1.54)  Batch time: 1.56(1.69)
+2024-09-14 20:43:50,770   INFO  Train:   59/80 ( 74%) [ 153/362 ( 42%)]  Loss: 3.121 (3.49)  LR: 4.211e-03  Time cost: 04:19/05:51 [31:55/3:39:12]  Acc_iter 21150       Data time: 0.13(0.15)  Forward time: 1.49(1.53)  Batch time: 1.63(1.68)
+2024-09-14 20:43:50,930   INFO  
+2024-09-14 20:44:32,610   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 20:45:12,699   INFO  Train:   59/80 ( 74%) [ 203/362 ( 56%)]  Loss: 3.362 (3.49)  LR: 4.166e-03  Time cost: 05:41/04:25 [33:17/3:36:22]  Acc_iter 21200       Data time: 0.13(0.15)  Forward time: 1.59(1.52)  Batch time: 1.72(1.67)
+2024-09-14 20:46:46,083   INFO  Train:   59/80 ( 74%) [ 253/362 ( 70%)]  Loss: 3.330 (3.48)  LR: 4.121e-03  Time cost: 07:14/03:06 [34:50/3:39:54]  Acc_iter 21250       Data time: 0.14(0.15)  Forward time: 1.81(1.56)  Batch time: 1.95(1.71)
+2024-09-14 20:48:17,633   INFO  Train:   59/80 ( 74%) [ 303/362 ( 84%)]  Loss: 3.739 (3.47)  LR: 4.077e-03  Time cost: 08:46/01:42 [36:22/3:40:59]  Acc_iter 21300       Data time: 0.13(0.15)  Forward time: 1.86(1.58)  Batch time: 2.00(1.73)
+2024-09-14 20:48:17,839   INFO  
+2024-09-14 20:49:33,107   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 20:49:51,181   INFO  Train:   59/80 ( 74%) [ 353/362 ( 98%)]  Loss: 3.586 (3.47)  LR: 4.033e-03  Time cost: 10:19/00:15 [37:55/3:42:03]  Acc_iter 21350       Data time: 0.16(0.15)  Forward time: 1.38(1.60)  Batch time: 1.55(1.75)
+2024-09-14 20:50:03,643   INFO  Train:   59/80 ( 74%) [ 361/362 (100%)]  Loss: 3.601 (3.47)  LR: 4.025e-03  Time cost: 10:32/00:01 [38:08/3:41:17]  Acc_iter 21358       Data time: 0.15(0.15)  Forward time: 0.29(1.60)  Batch time: 0.44(1.75)
+2024-09-14 20:50:40,196   INFO  Train:   60/80 ( 75%) [   0/362 (  0%)]  Loss: 3.467 (3.47)  LR: 4.025e-03  Time cost: 00:03/19:46 [38:44/6:55:06]  Acc_iter 21359       Data time: 1.01(1.01)  Forward time: 2.11(2.11)  Batch time: 3.12(3.12)
+2024-09-14 20:51:57,384   INFO  Train:   60/80 ( 75%) [  41/362 ( 11%)]  Loss: 3.642 (3.46)  LR: 3.988e-03  Time cost: 01:20/10:14 [40:01/4:01:25]  Acc_iter 21400       Data time: 0.16(0.17)  Forward time: 1.46(1.75)  Batch time: 1.62(1.91)
+2024-09-14 20:53:29,515   INFO  Train:   60/80 ( 75%) [  91/362 ( 25%)]  Loss: 3.462 (3.46)  LR: 3.944e-03  Time cost: 02:52/08:28 [41:34/3:54:50]  Acc_iter 21450       Data time: 0.12(0.15)  Forward time: 1.83(1.72)  Batch time: 1.95(1.87)
+2024-09-14 20:53:29,709   INFO  
+2024-09-14 20:54:52,147   INFO  Train:   60/80 ( 75%) [ 141/362 ( 39%)]  Loss: 3.121 (3.46)  LR: 3.900e-03  Time cost: 04:15/06:37 [42:56/3:43:30]  Acc_iter 21500       Data time: 0.12(0.15)  Forward time: 1.41(1.65)  Batch time: 1.53(1.80)
+2024-09-14 20:55:38,474   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 20:56:18,407   INFO  Train:   60/80 ( 75%) [ 191/362 ( 53%)]  Loss: 3.343 (3.46)  LR: 3.856e-03  Time cost: 05:41/05:04 [44:23/3:39:41]  Acc_iter 21550       Data time: 0.14(0.15)  Forward time: 1.60(1.63)  Batch time: 1.74(1.78)
+2024-09-14 20:57:42,069   INFO  Train:   60/80 ( 75%) [ 241/362 ( 67%)]  Loss: 3.416 (3.45)  LR: 3.812e-03  Time cost: 07:05/03:32 [45:46/3:35:31]  Acc_iter 21600       Data time: 0.16(0.15)  Forward time: 1.40(1.61)  Batch time: 1.56(1.76)
+2024-09-14 20:57:42,239   INFO  
+2024-09-14 20:59:02,861   INFO  Train:   60/80 ( 75%) [ 291/362 ( 80%)]  Loss: 3.627 (3.45)  LR: 3.768e-03  Time cost: 08:25/02:03 [47:07/3:31:07]  Acc_iter 21650       Data time: 0.17(0.15)  Forward time: 1.63(1.58)  Batch time: 1.80(1.73)
+2024-09-14 21:00:25,394   INFO  Train:   60/80 ( 75%) [ 341/362 ( 94%)]  Loss: 3.116 (3.45)  LR: 3.724e-03  Time cost: 09:48/00:36 [48:30/3:28:13]  Acc_iter 21700       Data time: 0.15(0.15)  Forward time: 1.39(1.57)  Batch time: 1.53(1.72)
+2024-09-14 21:00:38,070   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 21:00:59,539   INFO  Train:   60/80 ( 75%) [ 361/362 (100%)]  Loss: 4.276 (3.45)  LR: 3.707e-03  Time cost: 10:22/00:01 [49:04/3:27:34]  Acc_iter 21720       Data time: 0.14(0.15)  Forward time: 0.22(1.57)  Batch time: 0.36(1.72)
+2024-09-14 21:01:27,391   INFO  Train:   61/80 ( 76%) [   0/362 (  0%)]  Loss: 3.427 (3.43)  LR: 3.706e-03  Time cost: 00:02/13:20 [49:32/4:26:58]  Acc_iter 21721       Data time: 0.58(0.58)  Forward time: 1.50(1.50)  Batch time: 2.08(2.08)
+2024-09-14 21:02:15,231   INFO  Train:   61/80 ( 76%) [  29/362 (  8%)]  Loss: 3.378 (3.45)  LR: 3.681e-03  Time cost: 00:50/09:15 [50:19/3:20:30]  Acc_iter 21750       Data time: 0.16(0.16)  Forward time: 1.59(1.51)  Batch time: 1.75(1.66)
+2024-09-14 21:02:15,397   INFO  
+2024-09-14 21:03:41,519   INFO  Train:   61/80 ( 76%) [  79/362 ( 22%)]  Loss: 3.604 (3.46)  LR: 3.637e-03  Time cost: 02:16/08:02 [51:46/3:23:24]  Acc_iter 21800       Data time: 0.18(0.15)  Forward time: 1.26(1.55)  Batch time: 1.44(1.70)
+2024-09-14 21:05:08,317   INFO  Train:   61/80 ( 76%) [ 129/362 ( 36%)]  Loss: 3.242 (3.45)  LR: 3.594e-03  Time cost: 03:43/06:39 [53:12/3:23:25]  Acc_iter 21850       Data time: 0.13(0.15)  Forward time: 1.51(1.57)  Batch time: 1.64(1.72)
+2024-09-14 21:06:25,968   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 21:06:32,794   INFO  Train:   61/80 ( 76%) [ 179/362 ( 49%)]  Loss: 3.358 (3.44)  LR: 3.550e-03  Time cost: 05:07/05:12 [54:37/3:21:07]  Acc_iter 21900       Data time: 0.15(0.15)  Forward time: 1.47(1.56)  Batch time: 1.62(1.71)
+2024-09-14 21:06:32,954   INFO  
+2024-09-14 21:07:55,500   INFO  Train:   61/80 ( 76%) [ 229/362 ( 63%)]  Loss: 3.398 (3.43)  LR: 3.507e-03  Time cost: 06:30/03:45 [56:00/3:18:18]  Acc_iter 21950       Data time: 0.15(0.15)  Forward time: 1.45(1.55)  Batch time: 1.60(1.70)
+2024-09-14 21:09:13,317   INFO  Train:   61/80 ( 76%) [ 279/362 ( 77%)]  Loss: 3.781 (3.44)  LR: 3.464e-03  Time cost: 07:48/02:18 [57:17/3:13:58]  Acc_iter 22000       Data time: 0.15(0.15)  Forward time: 1.65(1.52)  Batch time: 1.80(1.67)
+2024-09-14 21:10:35,882   INFO  Train:   61/80 ( 76%) [ 329/362 ( 91%)]  Loss: 2.859 (3.44)  LR: 3.421e-03  Time cost: 09:10/00:55 [58:40/3:12:13]  Acc_iter 22050       Data time: 0.16(0.15)  Forward time: 1.68(1.52)  Batch time: 1.84(1.67)
+2024-09-14 21:10:36,070   INFO  
+2024-09-14 21:11:26,726   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 21:11:27,114   INFO  Train:   61/80 ( 76%) [ 361/362 (100%)]  Loss: 3.009 (3.44)  LR: 3.394e-03  Time cost: 10:01/00:01 [59:31/3:10:38]  Acc_iter 22082       Data time: 0.46(0.15)  Forward time: 0.36(1.52)  Batch time: 0.82(1.66)
+2024-09-14 21:11:57,440   INFO  Train:   62/80 ( 78%) [   0/362 (  0%)]  Loss: 3.199 (3.20)  LR: 3.393e-03  Time cost: 00:02/13:17 [1:00:02/4:12:32]  Acc_iter 22083       Data time: 0.58(0.58)  Forward time: 1.50(1.50)  Batch time: 2.07(2.07)
+2024-09-14 21:12:23,816   INFO  Train:   62/80 ( 78%) [  17/362 (  5%)]  Loss: 3.467 (3.42)  LR: 3.378e-03  Time cost: 00:28/09:07 [1:00:28/3:01:33]  Acc_iter 22100       Data time: 0.12(0.16)  Forward time: 1.10(1.42)  Batch time: 1.22(1.58)
+2024-09-14 21:13:45,905   INFO  Train:   62/80 ( 78%) [  67/362 ( 19%)]  Loss: 3.210 (3.37)  LR: 3.336e-03  Time cost: 01:50/08:00 [1:01:50/3:04:44]  Acc_iter 22150       Data time: 0.13(0.14)  Forward time: 1.92(1.48)  Batch time: 2.06(1.63)
+2024-09-14 21:15:07,636   INFO  Train:   62/80 ( 78%) [ 117/362 ( 32%)]  Loss: 3.471 (3.41)  LR: 3.293e-03  Time cost: 03:12/06:39 [1:03:12/3:03:43]  Acc_iter 22200       Data time: 0.13(0.14)  Forward time: 1.25(1.49)  Batch time: 1.39(1.63)
+2024-09-14 21:15:07,844   INFO  
+2024-09-14 21:16:32,336   INFO  Train:   62/80 ( 78%) [ 167/362 ( 46%)]  Loss: 3.476 (3.41)  LR: 3.251e-03  Time cost: 04:37/05:21 [1:04:36/3:04:29]  Acc_iter 22250       Data time: 0.13(0.14)  Forward time: 1.47(1.50)  Batch time: 1.60(1.65)
+2024-09-14 21:16:56,346   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 21:17:57,169   INFO  Train:   62/80 ( 78%) [ 217/362 ( 60%)]  Loss: 3.369 (3.41)  LR: 3.208e-03  Time cost: 06:01/04:00 [1:06:01/3:04:18]  Acc_iter 22300       Data time: 0.16(0.15)  Forward time: 1.69(1.51)  Batch time: 1.85(1.66)
+2024-09-14 21:19:20,086   INFO  Train:   62/80 ( 78%) [ 267/362 ( 74%)]  Loss: 3.287 (3.41)  LR: 3.166e-03  Time cost: 07:24/02:37 [1:07:24/3:02:53]  Acc_iter 22350       Data time: 0.15(0.15)  Forward time: 1.58(1.51)  Batch time: 1.73(1.66)
+2024-09-14 21:19:20,261   INFO  
+2024-09-14 21:20:46,538   INFO  Train:   62/80 ( 78%) [ 317/362 ( 88%)]  Loss: 3.583 (3.40)  LR: 3.124e-03  Time cost: 08:51/01:15 [1:08:51/3:02:41]  Acc_iter 22400       Data time: 0.16(0.15)  Forward time: 1.59(1.52)  Batch time: 1.76(1.67)
+2024-09-14 21:21:55,887   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 21:21:59,446   INFO  Train:   62/80 ( 78%) [ 361/362 (100%)]  Loss: 2.937 (3.41)  LR: 3.087e-03  Time cost: 10:04/00:01 [1:10:04/3:01:17]  Acc_iter 22444       Data time: 0.15(0.15)  Forward time: 0.28(1.52)  Batch time: 0.43(1.67)
+2024-09-14 21:22:28,328   INFO  Train:   63/80 ( 79%) [   0/362 (  0%)]  Loss: 3.144 (3.14)  LR: 3.087e-03  Time cost: 00:02/14:33 [1:10:32/4:22:01]  Acc_iter 22445       Data time: 0.66(0.66)  Forward time: 1.62(1.62)  Batch time: 2.28(2.28)
+2024-09-14 21:22:36,442   INFO  Train:   63/80 ( 79%) [   5/362 (  1%)]  Loss: 3.375 (3.35)  LR: 3.082e-03  Time cost: 00:10/10:26 [1:10:41/3:10:23]  Acc_iter 22450       Data time: 0.12(0.22)  Forward time: 1.69(1.51)  Batch time: 1.81(1.73)
+2024-09-14 21:23:59,154   INFO  Train:   63/80 ( 79%) [  55/362 ( 15%)]  Loss: 3.470 (3.39)  LR: 3.041e-03  Time cost: 01:33/08:31 [1:12:03/2:59:17]  Acc_iter 22500       Data time: 0.13(0.15)  Forward time: 1.42(1.51)  Batch time: 1.55(1.66)
+2024-09-14 21:23:59,361   INFO  
+2024-09-14 21:25:22,846   INFO  Train:   63/80 ( 79%) [ 105/362 ( 29%)]  Loss: 3.399 (3.38)  LR: 2.999e-03  Time cost: 02:56/07:08 [1:13:27/2:58:20]  Acc_iter 22550       Data time: 0.16(0.15)  Forward time: 1.23(1.52)  Batch time: 1.39(1.67)
+2024-09-14 21:26:45,173   INFO  Train:   63/80 ( 79%) [ 155/362 ( 43%)]  Loss: 3.142 (3.40)  LR: 2.958e-03  Time cost: 04:19/05:44 [1:14:49/2:56:11]  Acc_iter 22600       Data time: 0.15(0.15)  Forward time: 1.64(1.51)  Batch time: 1.78(1.66)
+2024-09-14 21:27:27,662   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 21:28:04,059   INFO  Train:   63/80 ( 79%) [ 205/362 ( 57%)]  Loss: 3.651 (3.40)  LR: 2.917e-03  Time cost: 05:38/04:17 [1:16:08/2:52:39]  Acc_iter 22650       Data time: 0.16(0.15)  Forward time: 1.56(1.50)  Batch time: 1.72(1.64)
+2024-09-14 21:28:04,241   INFO  
+2024-09-14 21:29:29,945   INFO  Train:   63/80 ( 79%) [ 255/362 ( 70%)]  Loss: 3.322 (3.40)  LR: 2.876e-03  Time cost: 07:04/02:57 [1:17:34/2:52:50]  Acc_iter 22700       Data time: 0.16(0.15)  Forward time: 1.59(1.51)  Batch time: 1.75(1.66)
+2024-09-14 21:30:52,841   INFO  Train:   63/80 ( 79%) [ 305/362 ( 84%)]  Loss: 3.540 (3.40)  LR: 2.835e-03  Time cost: 08:26/01:34 [1:18:57/2:51:29]  Acc_iter 22750       Data time: 0.15(0.15)  Forward time: 1.43(1.51)  Batch time: 1.58(1.66)
+2024-09-14 21:32:16,637   INFO  Train:   63/80 ( 79%) [ 355/362 ( 98%)]  Loss: 3.322 (3.40)  LR: 2.794e-03  Time cost: 09:50/00:11 [1:20:21/2:50:23]  Acc_iter 22800       Data time: 0.15(0.15)  Forward time: 1.38(1.51)  Batch time: 1.53(1.66)
+2024-09-14 21:32:16,844   INFO  
+2024-09-14 21:32:25,995   INFO  Train:   63/80 ( 79%) [ 361/362 (100%)]  Loss: 2.923 (3.40)  LR: 2.789e-03  Time cost: 10:00/00:01 [1:20:30/2:50:03]  Acc_iter 22806       Data time: 0.14(0.15)  Forward time: 0.31(1.51)  Batch time: 0.45(1.66)
+2024-09-14 21:32:26,387   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 21:32:55,063   INFO  Train:   64/80 ( 80%) [   0/362 (  0%)]  Loss: 3.436 (3.44)  LR: 2.789e-03  Time cost: 00:02/14:32 [1:20:59/4:07:15]  Acc_iter 22807       Data time: 0.58(0.58)  Forward time: 1.69(1.69)  Batch time: 2.27(2.27)
+2024-09-14 21:34:05,429   INFO  Train:   64/80 ( 80%) [  43/362 ( 12%)]  Loss: 3.105 (3.37)  LR: 2.754e-03  Time cost: 01:12/08:47 [1:22:10/2:48:27]  Acc_iter 22850       Data time: 0.15(0.15)  Forward time: 1.35(1.50)  Batch time: 1.50(1.65)
+2024-09-14 21:35:28,572   INFO  Train:   64/80 ( 80%) [  93/362 ( 26%)]  Loss: 3.680 (3.37)  LR: 2.714e-03  Time cost: 02:35/07:26 [1:23:33/2:47:33]  Acc_iter 22900       Data time: 0.16(0.15)  Forward time: 1.54(1.51)  Batch time: 1.69(1.66)
+2024-09-14 21:36:52,292   INFO  Train:   64/80 ( 80%) [ 143/362 ( 40%)]  Loss: 3.187 (3.36)  LR: 2.673e-03  Time cost: 03:59/06:04 [1:24:56/2:46:43]  Acc_iter 22950       Data time: 0.16(0.14)  Forward time: 1.44(1.52)  Batch time: 1.60(1.66)
+2024-09-14 21:36:52,470   INFO  
+2024-09-14 21:37:54,709   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 21:38:17,585   INFO  Train:   64/80 ( 80%) [ 193/362 ( 53%)]  Loss: 3.433 (3.36)  LR: 2.634e-03  Time cost: 05:24/04:43 [1:26:22/2:46:24]  Acc_iter 23000       Data time: 0.13(0.15)  Forward time: 1.77(1.53)  Batch time: 1.91(1.67)
+2024-09-14 21:39:41,487   INFO  Train:   64/80 ( 80%) [ 243/362 ( 67%)]  Loss: 3.662 (3.37)  LR: 2.594e-03  Time cost: 06:48/03:19 [1:27:46/2:45:04]  Acc_iter 23050       Data time: 0.17(0.15)  Forward time: 1.47(1.53)  Batch time: 1.64(1.67)
+2024-09-14 21:41:04,520   INFO  Train:   64/80 ( 80%) [ 293/362 ( 81%)]  Loss: 3.519 (3.37)  LR: 2.554e-03  Time cost: 08:11/01:55 [1:29:09/2:43:25]  Acc_iter 23100       Data time: 0.14(0.15)  Forward time: 1.43(1.53)  Batch time: 1.57(1.67)
+2024-09-14 21:41:04,731   INFO  
+2024-09-14 21:42:30,036   INFO  Train:   64/80 ( 80%) [ 343/362 ( 95%)]  Loss: 3.476 (3.37)  LR: 2.515e-03  Time cost: 09:37/00:31 [1:30:34/2:42:33]  Acc_iter 23150       Data time: 0.13(0.15)  Forward time: 1.50(1.53)  Batch time: 1.63(1.68)
+2024-09-14 21:42:54,688   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 21:42:58,711   INFO  Train:   64/80 ( 80%) [ 361/362 (100%)]  Loss: 2.664 (3.37)  LR: 2.501e-03  Time cost: 10:06/00:01 [1:31:03/2:41:38]  Acc_iter 23168       Data time: 0.15(0.15)  Forward time: 0.31(1.53)  Batch time: 0.45(1.67)
+2024-09-14 21:43:28,021   INFO  Train:   65/80 ( 81%) [   0/362 (  0%)]  Loss: 3.295 (3.29)  LR: 2.500e-03  Time cost: 00:02/12:17 [1:31:32/3:16:43]  Acc_iter 23169       Data time: 0.62(0.62)  Forward time: 1.30(1.30)  Batch time: 1.92(1.92)
+2024-09-14 21:44:20,832   INFO  Train:   65/80 ( 81%) [  31/362 (  9%)]  Loss: 3.240 (3.38)  LR: 2.476e-03  Time cost: 00:54/09:27 [1:32:25/2:44:34]  Acc_iter 23200       Data time: 0.14(0.16)  Forward time: 1.44(1.55)  Batch time: 1.59(1.71)
+2024-09-14 21:45:45,679   INFO  Train:   65/80 ( 81%) [  81/362 ( 22%)]  Loss: 3.507 (3.34)  LR: 2.437e-03  Time cost: 02:19/07:58 [1:33:50/2:42:09]  Acc_iter 23250       Data time: 0.15(0.15)  Forward time: 1.66(1.55)  Batch time: 1.81(1.70)
+2024-09-14 21:45:45,839   INFO  
+2024-09-14 21:47:07,282   INFO  Train:   65/80 ( 81%) [ 131/362 ( 36%)]  Loss: 3.451 (3.35)  LR: 2.398e-03  Time cost: 03:41/06:27 [1:35:11/2:38:10]  Acc_iter 23300       Data time: 0.13(0.15)  Forward time: 1.53(1.53)  Batch time: 1.65(1.68)
+2024-09-14 21:48:26,632   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 21:48:28,259   INFO  Train:   65/80 ( 81%) [ 181/362 ( 50%)]  Loss: 3.185 (3.35)  LR: 2.360e-03  Time cost: 05:02/05:00 [1:36:32/2:35:19]  Acc_iter 23350       Data time: 0.52(0.15)  Forward time: 1.48(1.51)  Batch time: 2.00(1.66)
+2024-09-14 21:49:46,810   INFO  Train:   65/80 ( 81%) [ 231/362 ( 64%)]  Loss: 3.316 (3.35)  LR: 2.321e-03  Time cost: 06:20/03:35 [1:37:51/2:32:08]  Acc_iter 23400       Data time: 0.16(0.15)  Forward time: 1.65(1.49)  Batch time: 1.81(1.64)
+2024-09-14 21:49:47,014   INFO  
+2024-09-14 21:51:08,588   INFO  Train:   65/80 ( 81%) [ 281/362 ( 78%)]  Loss: 3.328 (3.36)  LR: 2.283e-03  Time cost: 07:42/02:12 [1:39:13/2:30:40]  Acc_iter 23450       Data time: 0.15(0.15)  Forward time: 1.30(1.49)  Batch time: 1.44(1.64)
+2024-09-14 21:52:33,431   INFO  Train:   65/80 ( 81%) [ 331/362 ( 91%)]  Loss: 3.065 (3.35)  LR: 2.246e-03  Time cost: 09:07/00:51 [1:40:38/2:30:04]  Acc_iter 23500       Data time: 0.12(0.15)  Forward time: 1.57(1.50)  Batch time: 1.69(1.65)
+2024-09-14 21:53:22,991   INFO  Train:   65/80 ( 81%) [ 361/362 (100%)]  Loss: 3.419 (3.35)  LR: 2.223e-03  Time cost: 09:57/00:01 [1:41:27/2:29:16]  Acc_iter 23530       Data time: 0.15(0.15)  Forward time: 0.36(1.50)  Batch time: 0.51(1.65)
+2024-09-14 21:53:50,892   INFO  Train:   66/80 ( 82%) [   0/362 (  0%)]  Loss: 3.060 (3.06)  LR: 2.222e-03  Time cost: 00:02/14:55 [1:41:55/3:43:53]  Acc_iter 23531       Data time: 0.64(0.64)  Forward time: 1.68(1.68)  Batch time: 2.33(2.33)
+2024-09-14 21:54:23,642   INFO  Train:   66/80 ( 82%) [  19/362 (  5%)]  Loss: 3.192 (3.34)  LR: 2.208e-03  Time cost: 00:35/10:04 [1:42:28/2:38:50]  Acc_iter 23550       Data time: 0.12(0.17)  Forward time: 1.58(1.58)  Batch time: 1.70(1.75)
+2024-09-14 21:54:23,828   INFO  
+2024-09-14 21:55:46,536   INFO  Train:   66/80 ( 82%) [  69/362 ( 19%)]  Loss: 3.296 (3.37)  LR: 2.171e-03  Time cost: 01:58/08:14 [1:43:51/2:30:46]  Acc_iter 23600       Data time: 0.15(0.15)  Forward time: 1.03(1.54)  Batch time: 1.18(1.69)
+2024-09-14 21:57:07,875   INFO  Train:   66/80 ( 82%) [ 119/362 ( 33%)]  Loss: 3.291 (3.34)  LR: 2.133e-03  Time cost: 03:19/06:43 [1:45:12/2:27:07]  Acc_iter 23650       Data time: 0.16(0.15)  Forward time: 1.41(1.52)  Batch time: 1.57(1.66)
+2024-09-14 21:58:30,748   INFO  Train:   66/80 ( 82%) [ 169/362 ( 47%)]  Loss: 3.101 (3.34)  LR: 2.097e-03  Time cost: 04:42/05:20 [1:46:35/2:25:37]  Acc_iter 23700       Data time: 0.12(0.14)  Forward time: 1.53(1.52)  Batch time: 1.66(1.66)
+2024-09-14 21:58:30,950   INFO  
+2024-09-14 21:58:49,019   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 21:59:56,323   INFO  Train:   66/80 ( 82%) [ 219/362 ( 60%)]  Loss: 3.448 (3.35)  LR: 2.060e-03  Time cost: 06:07/03:59 [1:48:00/2:25:14]  Acc_iter 23750       Data time: 0.13(0.15)  Forward time: 1.45(1.52)  Batch time: 1.58(1.67)
+2024-09-14 22:01:19,684   INFO  Train:   66/80 ( 82%) [ 269/362 ( 74%)]  Loss: 3.181 (3.35)  LR: 2.023e-03  Time cost: 07:31/02:35 [1:49:24/2:23:45]  Acc_iter 23800       Data time: 0.16(0.15)  Forward time: 1.70(1.52)  Batch time: 1.86(1.67)
+2024-09-14 22:02:41,931   INFO  Train:   66/80 ( 82%) [ 319/362 ( 88%)]  Loss: 3.247 (3.35)  LR: 1.987e-03  Time cost: 08:53/01:11 [1:50:46/2:22:01]  Acc_iter 23850       Data time: 0.00(0.15)  Forward time: 1.74(1.52)  Batch time: 1.74(1.67)
+2024-09-14 22:02:42,115   INFO  
+2024-09-14 22:03:49,259   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 22:03:53,439   INFO  Train:   66/80 ( 82%) [ 361/362 (100%)]  Loss: 3.027 (3.35)  LR: 1.957e-03  Time cost: 10:05/00:01 [1:51:58/2:21:11]  Acc_iter 23892       Data time: 0.15(0.15)  Forward time: 0.35(1.52)  Batch time: 0.49(1.67)
+2024-09-14 22:04:21,746   INFO  Train:   67/80 ( 84%) [   0/362 (  0%)]  Loss: 3.473 (3.47)  LR: 1.956e-03  Time cost: 00:02/14:12 [1:52:26/3:18:54]  Acc_iter 23893       Data time: 0.56(0.56)  Forward time: 1.67(1.67)  Batch time: 2.23(2.23)
+2024-09-14 22:04:35,151   INFO  Train:   67/80 ( 84%) [   7/362 (  2%)]  Loss: 3.364 (3.45)  LR: 1.951e-03  Time cost: 00:15/11:39 [1:52:39/2:46:09]  Acc_iter 23900       Data time: 0.14(0.19)  Forward time: 1.57(1.76)  Batch time: 1.71(1.95)
+2024-09-14 22:05:58,044   INFO  Train:   67/80 ( 84%) [  57/362 ( 16%)]  Loss: 3.224 (3.37)  LR: 1.916e-03  Time cost: 01:38/08:38 [1:54:02/2:22:03]  Acc_iter 23950       Data time: 0.14(0.15)  Forward time: 1.73(1.55)  Batch time: 1.88(1.70)
+2024-09-14 22:07:23,334   INFO  Train:   67/80 ( 84%) [ 107/362 ( 30%)]  Loss: 3.449 (3.35)  LR: 1.880e-03  Time cost: 03:03/07:14 [1:55:27/2:20:49]  Acc_iter 24000       Data time: 0.15(0.15)  Forward time: 1.68(1.56)  Batch time: 1.83(1.70)
+2024-09-14 22:07:23,538   INFO  
+2024-09-14 22:08:45,951   INFO  Train:   67/80 ( 84%) [ 157/362 ( 43%)]  Loss: 3.171 (3.34)  LR: 1.845e-03  Time cost: 04:26/05:45 [1:56:50/2:18:05]  Acc_iter 24050       Data time: 0.16(0.15)  Forward time: 1.43(1.54)  Batch time: 1.59(1.69)
+2024-09-14 22:09:20,398   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 22:10:09,444   INFO  Train:   67/80 ( 84%) [ 207/362 ( 57%)]  Loss: 3.389 (3.33)  LR: 1.810e-03  Time cost: 05:50/04:20 [1:58:14/2:16:20]  Acc_iter 24100       Data time: 0.15(0.15)  Forward time: 1.41(1.54)  Batch time: 1.55(1.68)
+2024-09-14 22:11:33,842   INFO  Train:   67/80 ( 84%) [ 257/362 ( 71%)]  Loss: 3.361 (3.33)  LR: 1.775e-03  Time cost: 07:14/02:56 [1:59:38/2:15:01]  Acc_iter 24150       Data time: 0.14(0.15)  Forward time: 1.52(1.54)  Batch time: 1.65(1.68)
+2024-09-14 22:11:34,046   INFO  
+2024-09-14 22:12:56,512   INFO  Train:   67/80 ( 84%) [ 307/362 ( 85%)]  Loss: 3.221 (3.33)  LR: 1.741e-03  Time cost: 08:37/01:32 [2:01:01/2:13:13]  Acc_iter 24200       Data time: 0.14(0.15)  Forward time: 1.62(1.53)  Batch time: 1.76(1.68)
+2024-09-14 22:14:19,858   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 22:14:21,796   INFO  Train:   67/80 ( 84%) [ 357/362 ( 99%)]  Loss: 3.415 (3.32)  LR: 1.707e-03  Time cost: 10:02/00:08 [2:02:26/2:12:07]  Acc_iter 24250       Data time: 0.48(0.15)  Forward time: 1.78(1.54)  Batch time: 2.26(1.68)
+2024-09-14 22:14:27,056   INFO  Train:   67/80 ( 84%) [ 361/362 (100%)]  Loss: 3.108 (3.32)  LR: 1.704e-03  Time cost: 10:07/00:01 [2:02:31/2:11:41]  Acc_iter 24254       Data time: 0.15(0.15)  Forward time: 0.23(1.53)  Batch time: 0.38(1.68)
+2024-09-14 22:14:54,001   INFO  Train:   68/80 ( 85%) [   0/362 (  0%)]  Loss: 3.228 (3.23)  LR: 1.703e-03  Time cost: 00:02/12:28 [2:02:58/2:42:13]  Acc_iter 24255       Data time: 0.61(0.61)  Forward time: 1.34(1.34)  Batch time: 1.95(1.95)
+2024-09-14 22:16:08,222   INFO  Train:   68/80 ( 85%) [  45/362 ( 12%)]  Loss: 3.301 (3.29)  LR: 1.673e-03  Time cost: 01:16/08:45 [2:04:12/2:08:50]  Acc_iter 24300       Data time: 0.16(0.15)  Forward time: 1.26(1.51)  Batch time: 1.42(1.66)
+2024-09-14 22:16:08,386   INFO  
+2024-09-14 22:17:32,464   INFO  Train:   68/80 ( 85%) [  95/362 ( 26%)]  Loss: 3.175 (3.31)  LR: 1.639e-03  Time cost: 02:40/07:26 [2:05:37/2:08:30]  Acc_iter 24350       Data time: 0.16(0.15)  Forward time: 1.72(1.52)  Batch time: 1.88(1.67)
+2024-09-14 22:18:55,556   INFO  Train:   68/80 ( 85%) [ 145/362 ( 40%)]  Loss: 3.353 (3.32)  LR: 1.606e-03  Time cost: 04:03/06:02 [2:07:00/2:06:50]  Acc_iter 24400       Data time: 0.16(0.15)  Forward time: 1.25(1.52)  Batch time: 1.41(1.67)
+2024-09-14 22:19:53,021   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 22:20:15,273   INFO  Train:   68/80 ( 85%) [ 195/362 ( 54%)]  Loss: 3.444 (3.31)  LR: 1.573e-03  Time cost: 05:23/04:35 [2:08:19/2:04:01]  Acc_iter 24450       Data time: 0.16(0.15)  Forward time: 1.19(1.50)  Batch time: 1.35(1.65)
+2024-09-14 22:20:15,485   INFO  
+2024-09-14 22:21:38,204   INFO  Train:   68/80 ( 85%) [ 245/362 ( 68%)]  Loss: 3.169 (3.32)  LR: 1.540e-03  Time cost: 06:46/03:13 [2:09:42/2:02:47]  Acc_iter 24500       Data time: 0.16(0.15)  Forward time: 1.19(1.50)  Batch time: 1.35(1.65)
+2024-09-14 22:23:03,789   INFO  Train:   68/80 ( 85%) [ 295/362 ( 81%)]  Loss: 3.316 (3.32)  LR: 1.508e-03  Time cost: 08:11/01:51 [2:11:08/2:02:09]  Acc_iter 24550       Data time: 0.13(0.15)  Forward time: 1.91(1.51)  Batch time: 2.04(1.66)
+2024-09-14 22:24:28,474   INFO  Train:   68/80 ( 85%) [ 345/362 ( 95%)]  Loss: 3.197 (3.32)  LR: 1.475e-03  Time cost: 09:36/00:28 [2:12:33/2:01:06]  Acc_iter 24600       Data time: 0.13(0.15)  Forward time: 1.71(1.52)  Batch time: 1.84(1.67)
+2024-09-14 22:24:28,666   INFO  
+2024-09-14 22:24:52,873   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 22:24:54,793   INFO  Train:   68/80 ( 85%) [ 361/362 (100%)]  Loss: 3.219 (3.32)  LR: 1.465e-03  Time cost: 10:02/00:01 [2:12:59/2:00:35]  Acc_iter 24616       Data time: 0.13(0.15)  Forward time: 0.29(1.52)  Batch time: 0.43(1.67)
+2024-09-14 22:25:22,708   INFO  Train:   69/80 ( 86%) [   0/362 (  0%)]  Loss: 3.432 (3.43)  LR: 1.465e-03  Time cost: 00:02/15:02 [2:13:27/3:00:34]  Acc_iter 24617       Data time: 0.78(0.78)  Forward time: 1.57(1.57)  Batch time: 2.35(2.35)
+2024-09-14 22:26:19,336   INFO  Train:   69/80 ( 86%) [  33/362 (  9%)]  Loss: 3.264 (3.30)  LR: 1.444e-03  Time cost: 00:59/09:32 [2:14:23/2:04:56]  Acc_iter 24650       Data time: 0.13(0.16)  Forward time: 1.22(1.57)  Batch time: 1.35(1.74)
+2024-09-14 22:27:42,602   INFO  Train:   69/80 ( 86%) [  83/362 ( 23%)]  Loss: 3.181 (3.30)  LR: 1.412e-03  Time cost: 02:22/07:52 [2:15:47/2:00:22]  Acc_iter 24700       Data time: 0.16(0.15)  Forward time: 1.07(1.54)  Batch time: 1.23(1.69)
+2024-09-14 22:29:07,273   INFO  Train:   69/80 ( 86%) [ 133/362 ( 37%)]  Loss: 3.135 (3.31)  LR: 1.381e-03  Time cost: 03:47/06:28 [2:17:11/1:58:55]  Acc_iter 24750       Data time: 0.14(0.15)  Forward time: 1.26(1.55)  Batch time: 1.41(1.69)
+2024-09-14 22:29:07,453   INFO  
+2024-09-14 22:30:21,620   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 22:30:33,283   INFO  Train:   69/80 ( 86%) [ 183/362 ( 51%)]  Loss: 3.487 (3.31)  LR: 1.350e-03  Time cost: 05:13/05:04 [2:18:37/1:57:59]  Acc_iter 24800       Data time: 0.13(0.15)  Forward time: 1.41(1.55)  Batch time: 1.54(1.70)
+2024-09-14 22:31:57,466   INFO  Train:   69/80 ( 86%) [ 233/362 ( 64%)]  Loss: 3.531 (3.31)  LR: 1.319e-03  Time cost: 06:37/03:38 [2:20:02/1:56:19]  Acc_iter 24850       Data time: 0.15(0.15)  Forward time: 1.39(1.55)  Batch time: 1.54(1.70)
+2024-09-14 22:33:21,177   INFO  Train:   69/80 ( 86%) [ 283/362 ( 78%)]  Loss: 3.548 (3.31)  LR: 1.288e-03  Time cost: 08:00/02:13 [2:21:25/1:54:37]  Acc_iter 24900       Data time: 0.12(0.15)  Forward time: 1.57(1.55)  Batch time: 1.69(1.69)
+2024-09-14 22:33:21,365   INFO  
+2024-09-14 22:34:44,627   INFO  Train:   69/80 ( 86%) [ 333/362 ( 92%)]  Loss: 3.506 (3.31)  LR: 1.258e-03  Time cost: 09:24/00:49 [2:22:49/1:52:58]  Acc_iter 24950       Data time: 0.13(0.15)  Forward time: 1.44(1.54)  Batch time: 1.57(1.69)
+2024-09-14 22:35:21,715   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 22:35:30,170   INFO  Train:   69/80 ( 86%) [ 361/362 (100%)]  Loss: 4.160 (3.31)  LR: 1.241e-03  Time cost: 10:09/00:01 [2:23:34/1:51:51]  Acc_iter 24978       Data time: 0.12(0.15)  Forward time: 0.35(1.54)  Batch time: 0.47(1.68)
+2024-09-14 22:35:59,349   INFO  Train:   70/80 ( 88%) [   0/362 (  0%)]  Loss: 3.043 (3.04)  LR: 1.241e-03  Time cost: 00:02/12:56 [2:24:03/2:22:24]  Acc_iter 24979       Data time: 0.57(0.57)  Forward time: 1.45(1.45)  Batch time: 2.01(2.01)
+2024-09-14 22:36:33,923   INFO  Train:   70/80 ( 88%) [  21/362 (  6%)]  Loss: 3.284 (3.28)  LR: 1.228e-03  Time cost: 00:36/09:29 [2:24:38/1:50:11]  Acc_iter 25000       Data time: 0.11(0.16)  Forward time: 1.39(1.50)  Batch time: 1.50(1.66)
+2024-09-14 22:37:55,790   INFO  Train:   70/80 ( 88%) [  71/362 ( 20%)]  Loss: 3.039 (3.29)  LR: 1.199e-03  Time cost: 01:58/07:59 [2:26:00/1:47:21]  Acc_iter 25050       Data time: 0.12(0.15)  Forward time: 1.59(1.50)  Batch time: 1.71(1.65)
+2024-09-14 22:37:55,962   INFO  
+2024-09-14 22:39:20,407   INFO  Train:   70/80 ( 88%) [ 121/362 ( 33%)]  Loss: 3.051 (3.27)  LR: 1.170e-03  Time cost: 03:23/06:41 [2:27:25/1:47:10]  Acc_iter 25100       Data time: 0.16(0.14)  Forward time: 1.72(1.52)  Batch time: 1.88(1.66)
+2024-09-14 22:40:45,835   INFO  Train:   70/80 ( 88%) [ 171/362 ( 47%)]  Loss: 3.251 (3.27)  LR: 1.141e-03  Time cost: 04:48/05:20 [2:28:50/1:46:35]  Acc_iter 25150       Data time: 0.16(0.14)  Forward time: 1.52(1.53)  Batch time: 1.68(1.68)
+2024-09-14 22:40:58,881   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 22:42:11,942   INFO  Train:   70/80 ( 88%) [ 221/362 ( 61%)]  Loss: 3.306 (3.27)  LR: 1.112e-03  Time cost: 06:14/03:58 [2:30:16/1:45:48]  Acc_iter 25200       Data time: 0.13(0.15)  Forward time: 1.72(1.54)  Batch time: 1.85(1.69)
+2024-09-14 22:42:12,153   INFO  
+2024-09-14 22:43:36,403   INFO  Train:   70/80 ( 88%) [ 271/362 ( 75%)]  Loss: 3.282 (3.28)  LR: 1.084e-03  Time cost: 07:39/02:33 [2:31:41/1:44:25]  Acc_iter 25250       Data time: 0.13(0.15)  Forward time: 1.83(1.54)  Batch time: 1.96(1.69)
+2024-09-14 22:44:59,068   INFO  Train:   70/80 ( 88%) [ 321/362 ( 89%)]  Loss: 3.054 (3.28)  LR: 1.056e-03  Time cost: 09:01/01:08 [2:33:03/1:42:40]  Acc_iter 25300       Data time: 0.13(0.15)  Forward time: 1.58(1.54)  Batch time: 1.72(1.68)
+2024-09-14 22:45:58,631   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 22:46:03,554   INFO  Train:   70/80 ( 88%) [ 361/362 (100%)]  Loss: 3.489 (3.28)  LR: 1.034e-03  Time cost: 10:06/00:01 [2:34:08/1:41:05]  Acc_iter 25340       Data time: 0.14(0.15)  Forward time: 0.30(1.53)  Batch time: 0.43(1.67)
+2024-09-14 22:46:29,458   INFO  Train:   71/80 ( 89%) [   0/362 (  0%)]  Loss: 3.612 (3.61)  LR: 1.033e-03  Time cost: 00:02/14:31 [2:34:34/2:25:11]  Acc_iter 25341       Data time: 0.65(0.65)  Forward time: 1.62(1.62)  Batch time: 2.27(2.27)
+2024-09-14 22:46:44,793   INFO  Train:   71/80 ( 89%) [   9/362 (  2%)]  Loss: 3.293 (3.30)  LR: 1.028e-03  Time cost: 00:17/10:26 [2:34:49/1:46:46]  Acc_iter 25350       Data time: 0.13(0.20)  Forward time: 1.34(1.56)  Batch time: 1.47(1.76)
+2024-09-14 22:46:45,002   INFO  
+2024-09-14 22:48:04,751   INFO  Train:   71/80 ( 89%) [  59/362 ( 16%)]  Loss: 3.260 (3.27)  LR: 1.001e-03  Time cost: 01:37/08:13 [2:36:09/1:36:38]  Acc_iter 25400       Data time: 0.13(0.15)  Forward time: 1.35(1.47)  Batch time: 1.49(1.63)
+2024-09-14 22:49:23,411   INFO  Train:   71/80 ( 89%) [ 109/362 ( 30%)]  Loss: 3.172 (3.27)  LR: 9.741e-04  Time cost: 02:56/06:45 [2:37:28/1:33:49]  Acc_iter 25450       Data time: 0.13(0.15)  Forward time: 1.04(1.45)  Batch time: 1.17(1.60)
+2024-09-14 22:50:45,196   INFO  Train:   71/80 ( 89%) [ 159/362 ( 44%)]  Loss: 3.618 (3.27)  LR: 9.475e-04  Time cost: 04:18/05:27 [2:38:49/1:33:03]  Acc_iter 25500       Data time: 0.18(0.15)  Forward time: 1.43(1.47)  Batch time: 1.61(1.61)
+2024-09-14 22:50:45,379   INFO  
+2024-09-14 22:51:28,956   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 22:52:09,284   INFO  Train:   71/80 ( 89%) [ 209/362 ( 58%)]  Loss: 3.116 (3.26)  LR: 9.212e-04  Time cost: 05:42/04:09 [2:40:13/1:32:38]  Acc_iter 25550       Data time: 0.15(0.15)  Forward time: 1.36(1.48)  Batch time: 1.50(1.63)
+2024-09-14 22:53:29,735   INFO  Train:   71/80 ( 89%) [ 259/362 ( 72%)]  Loss: 3.018 (3.27)  LR: 8.952e-04  Time cost: 07:02/02:47 [2:41:34/1:31:04]  Acc_iter 25600       Data time: 0.15(0.15)  Forward time: 1.52(1.48)  Batch time: 1.67(1.63)
+2024-09-14 22:54:52,976   INFO  Train:   71/80 ( 89%) [ 309/362 ( 85%)]  Loss: 3.429 (3.27)  LR: 8.696e-04  Time cost: 08:25/01:26 [2:42:57/1:30:03]  Acc_iter 25650       Data time: 0.15(0.15)  Forward time: 1.20(1.48)  Batch time: 1.35(1.63)
+2024-09-14 22:54:53,144   INFO  
+2024-09-14 22:56:13,826   INFO  Train:   71/80 ( 89%) [ 359/362 ( 99%)]  Loss: 3.194 (3.27)  LR: 8.443e-04  Time cost: 09:46/00:04 [2:44:18/1:28:35]  Acc_iter 25700       Data time: 0.16(0.15)  Forward time: 1.34(1.48)  Batch time: 1.50(1.63)
+2024-09-14 22:56:15,720   INFO  Train:   71/80 ( 89%) [ 361/362 (100%)]  Loss: 6.263 (3.27)  LR: 8.432e-04  Time cost: 09:48/00:01 [2:44:20/1:28:19]  Acc_iter 25702       Data time: 0.14(0.15)  Forward time: 0.19(1.48)  Batch time: 0.33(1.63)
+2024-09-14 22:56:44,493   INFO  Train:   72/80 ( 90%) [   0/362 (  0%)]  Loss: 3.157 (3.16)  LR: 8.427e-04  Time cost: 00:02/14:36 [2:44:49/2:11:31]  Acc_iter 25703       Data time: 0.72(0.72)  Forward time: 1.58(1.58)  Batch time: 2.29(2.29)
+2024-09-14 22:58:01,681   INFO  Train:   72/80 ( 90%) [  47/362 ( 13%)]  Loss: 3.472 (3.27)  LR: 8.193e-04  Time cost: 01:19/08:42 [2:46:06/1:28:45]  Acc_iter 25750       Data time: 0.16(0.16)  Forward time: 1.32(1.50)  Batch time: 1.48(1.66)
+2024-09-14 22:59:22,037   INFO  Train:   72/80 ( 90%) [  97/362 ( 27%)]  Loss: 3.003 (3.27)  LR: 7.947e-04  Time cost: 02:39/07:12 [2:47:26/1:25:59]  Acc_iter 25800       Data time: 0.11(0.15)  Forward time: 1.19(1.48)  Batch time: 1.29(1.63)
+2024-09-14 22:59:22,250   INFO  
+2024-09-14 23:00:43,640   INFO  Train:   72/80 ( 90%) [ 147/362 ( 41%)]  Loss: 3.254 (3.25)  LR: 7.704e-04  Time cost: 04:01/05:50 [2:48:48/1:24:37]  Acc_iter 25850       Data time: 0.14(0.15)  Forward time: 1.49(1.48)  Batch time: 1.63(1.63)
+2024-09-14 23:01:43,167   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 23:02:02,587   INFO  Train:   72/80 ( 90%) [ 197/362 ( 54%)]  Loss: 3.514 (3.25)  LR: 7.465e-04  Time cost: 05:20/04:27 [2:50:07/1:22:35]  Acc_iter 25900       Data time: 0.16(0.15)  Forward time: 1.20(1.47)  Batch time: 1.36(1.62)
+2024-09-14 23:03:23,831   INFO  Train:   72/80 ( 90%) [ 247/362 ( 68%)]  Loss: 3.616 (3.26)  LR: 7.229e-04  Time cost: 06:41/03:06 [2:51:28/1:21:17]  Acc_iter 25950       Data time: 0.15(0.15)  Forward time: 1.49(1.47)  Batch time: 1.64(1.62)
+2024-09-14 23:03:24,029   INFO  
+2024-09-14 23:04:45,041   INFO  Train:   72/80 ( 90%) [ 297/362 ( 82%)]  Loss: 3.080 (3.26)  LR: 6.996e-04  Time cost: 08:02/01:45 [2:52:49/1:19:58]  Acc_iter 26000       Data time: 0.15(0.15)  Forward time: 1.48(1.47)  Batch time: 1.63(1.62)
+2024-09-14 23:06:06,693   INFO  Train:   72/80 ( 90%) [ 347/362 ( 96%)]  Loss: 3.340 (3.26)  LR: 6.768e-04  Time cost: 09:24/00:24 [2:54:11/1:18:43]  Acc_iter 26050       Data time: 0.13(0.15)  Forward time: 1.65(1.47)  Batch time: 1.78(1.62)
+2024-09-14 23:06:26,889   INFO  Train:   72/80 ( 90%) [ 361/362 (100%)]  Loss: 3.120 (3.26)  LR: 6.704e-04  Time cost: 09:44/00:01 [2:54:31/1:18:00]  Acc_iter 26064       Data time: 0.12(0.15)  Forward time: 0.18(1.47)  Batch time: 0.30(1.62)
+2024-09-14 23:06:50,545   INFO  Train:   73/80 ( 91%) [   0/362 (  0%)]  Loss: 3.090 (3.09)  LR: 6.700e-04  Time cost: 00:02/15:46 [2:54:55/2:06:09]  Acc_iter 26065       Data time: 0.77(0.77)  Forward time: 1.70(1.70)  Batch time: 2.47(2.47)
+2024-09-14 23:07:45,733   INFO  Train:   73/80 ( 91%) [  35/362 ( 10%)]  Loss: 2.941 (3.23)  LR: 6.542e-04  Time cost: 00:57/08:45 [2:55:50/1:16:33]  Acc_iter 26100       Data time: 0.13(0.16)  Forward time: 1.84(1.44)  Batch time: 1.98(1.60)
+2024-09-14 23:07:45,909   INFO  
+2024-09-14 23:09:09,361   INFO  Train:   73/80 ( 91%) [  85/362 ( 23%)]  Loss: 3.545 (3.26)  LR: 6.321e-04  Time cost: 02:21/07:35 [2:57:13/1:17:02]  Acc_iter 26150       Data time: 0.13(0.15)  Forward time: 1.69(1.49)  Batch time: 1.83(1.64)
+2024-09-14 23:10:33,171   INFO  Train:   73/80 ( 91%) [ 135/362 ( 37%)]  Loss: 3.328 (3.26)  LR: 6.102e-04  Time cost: 03:45/06:15 [2:58:37/1:16:12]  Acc_iter 26200       Data time: 0.16(0.15)  Forward time: 1.55(1.51)  Batch time: 1.71(1.66)
+2024-09-14 23:11:49,331   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 23:11:55,465   INFO  Train:   73/80 ( 91%) [ 185/362 ( 51%)]  Loss: 3.083 (3.26)  LR: 5.888e-04  Time cost: 05:07/04:52 [3:00:00/1:14:42]  Acc_iter 26250       Data time: 0.13(0.15)  Forward time: 1.60(1.50)  Batch time: 1.73(1.65)
+2024-09-14 23:11:55,637   INFO  
+2024-09-14 23:13:19,812   INFO  Train:   73/80 ( 91%) [ 235/362 ( 65%)]  Loss: 3.356 (3.26)  LR: 5.677e-04  Time cost: 06:31/03:30 [3:01:24/1:13:38]  Acc_iter 26300       Data time: 0.14(0.15)  Forward time: 1.48(1.51)  Batch time: 1.63(1.66)
+2024-09-14 23:14:41,795   INFO  Train:   73/80 ( 91%) [ 285/362 ( 79%)]  Loss: 3.222 (3.26)  LR: 5.470e-04  Time cost: 07:53/02:07 [3:02:46/1:12:06]  Acc_iter 26350       Data time: 0.14(0.15)  Forward time: 1.37(1.51)  Batch time: 1.51(1.66)
+2024-09-14 23:16:01,257   INFO  Train:   73/80 ( 91%) [ 335/362 ( 93%)]  Loss: 3.148 (3.26)  LR: 5.266e-04  Time cost: 09:13/00:44 [3:04:05/1:10:17]  Acc_iter 26400       Data time: 0.12(0.15)  Forward time: 1.64(1.50)  Batch time: 1.75(1.65)
+2024-09-14 23:16:01,478   INFO  
+2024-09-14 23:16:41,149   INFO  Train:   73/80 ( 91%) [ 361/362 (100%)]  Loss: 3.528 (3.26)  LR: 5.161e-04  Time cost: 09:53/00:01 [3:04:45/1:09:14]  Acc_iter 26426       Data time: 0.15(0.15)  Forward time: 0.30(1.49)  Batch time: 0.45(1.64)
+2024-09-14 23:17:06,318   INFO  Train:   74/80 ( 92%) [   0/362 (  0%)]  Loss: 3.559 (3.56)  LR: 5.157e-04  Time cost: 00:02/15:44 [3:05:10/1:50:10]  Acc_iter 26427       Data time: 0.64(0.64)  Forward time: 1.81(1.81)  Batch time: 2.45(2.45)
+2024-09-14 23:17:42,934   INFO  Train:   74/80 ( 92%) [  23/362 (  6%)]  Loss: 3.150 (3.27)  LR: 5.066e-04  Time cost: 00:39/09:14 [3:05:47/1:08:23]  Acc_iter 26450       Data time: 0.15(0.17)  Forward time: 0.95(1.47)  Batch time: 1.10(1.63)
+2024-09-14 23:19:03,646   INFO  Train:   74/80 ( 92%) [  73/362 ( 20%)]  Loss: 3.142 (3.28)  LR: 4.869e-04  Time cost: 01:59/07:48 [3:07:08/1:06:28]  Acc_iter 26500       Data time: 0.12(0.15)  Forward time: 1.66(1.47)  Batch time: 1.78(1.62)
+2024-09-14 23:20:24,660   INFO  Train:   74/80 ( 92%) [ 123/362 ( 34%)]  Loss: 3.314 (3.28)  LR: 4.677e-04  Time cost: 03:20/06:27 [3:08:29/1:05:07]  Acc_iter 26550       Data time: 0.13(0.15)  Forward time: 1.67(1.47)  Batch time: 1.80(1.62)
+2024-09-14 23:20:24,872   INFO  
+2024-09-14 23:21:45,158   INFO  Train:   74/80 ( 92%) [ 173/362 ( 48%)]  Loss: 3.438 (3.27)  LR: 4.488e-04  Time cost: 04:41/05:05 [3:09:49/1:03:38]  Acc_iter 26600       Data time: 0.13(0.15)  Forward time: 1.45(1.47)  Batch time: 1.59(1.62)
+2024-09-14 23:22:05,642   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 23:23:02,361   INFO  Train:   74/80 ( 92%) [ 223/362 ( 62%)]  Loss: 3.179 (3.26)  LR: 4.302e-04  Time cost: 05:58/03:42 [3:11:06/1:01:40]  Acc_iter 26650       Data time: 0.16(0.15)  Forward time: 1.38(1.45)  Batch time: 1.55(1.60)
+2024-09-14 23:24:23,452   INFO  Train:   74/80 ( 92%) [ 273/362 ( 75%)]  Loss: 3.121 (3.26)  LR: 4.121e-04  Time cost: 07:19/02:22 [3:12:28/1:00:28]  Acc_iter 26700       Data time: 0.15(0.15)  Forward time: 1.32(1.46)  Batch time: 1.47(1.60)
+2024-09-14 23:24:23,668   INFO  
+2024-09-14 23:25:44,026   INFO  Train:   74/80 ( 92%) [ 323/362 ( 89%)]  Loss: 3.118 (3.26)  LR: 3.943e-04  Time cost: 08:40/01:02 [3:13:48/59:10]  Acc_iter 26750       Data time: 0.13(0.15)  Forward time: 1.36(1.46)  Batch time: 1.49(1.61)
+2024-09-14 23:26:43,017   INFO  Train:   74/80 ( 92%) [ 361/362 (100%)]  Loss: 3.630 (3.26)  LR: 3.810e-04  Time cost: 09:39/00:01 [3:14:47/57:57]  Acc_iter 26788       Data time: 0.12(0.15)  Forward time: 0.17(1.45)  Batch time: 0.29(1.60)
+2024-09-14 23:27:10,465   INFO  Train:   75/80 ( 94%) [   0/362 (  0%)]  Loss: 3.316 (3.32)  LR: 3.807e-04  Time cost: 00:02/15:58 [3:15:15/1:35:49]  Acc_iter 26789       Data time: 0.64(0.64)  Forward time: 1.85(1.85)  Batch time: 2.49(2.49)
+2024-09-14 23:27:28,771   INFO  Train:   75/80 ( 94%) [  11/362 (  3%)]  Loss: 3.165 (3.18)  LR: 3.769e-04  Time cost: 00:20/10:12 [3:15:33/1:02:53]  Acc_iter 26800       Data time: 0.16(0.19)  Forward time: 1.51(1.54)  Batch time: 1.67(1.73)
+2024-09-14 23:28:47,428   INFO  Train:   75/80 ( 94%) [  61/362 ( 17%)]  Loss: 3.174 (3.26)  LR: 3.599e-04  Time cost: 01:39/08:03 [3:16:52/56:31]  Acc_iter 26850       Data time: 0.13(0.15)  Forward time: 1.17(1.45)  Batch time: 1.30(1.60)
+2024-09-14 23:28:47,647   INFO  
+2024-09-14 23:30:05,182   INFO  Train:   75/80 ( 94%) [ 111/362 ( 31%)]  Loss: 3.306 (3.26)  LR: 3.432e-04  Time cost: 02:57/06:37 [3:18:09/54:23]  Acc_iter 26900       Data time: 0.15(0.15)  Forward time: 1.48(1.43)  Batch time: 1.63(1.58)
+2024-09-14 23:31:25,866   INFO  Train:   75/80 ( 94%) [ 161/362 ( 44%)]  Loss: 3.338 (3.24)  LR: 3.270e-04  Time cost: 04:18/05:20 [3:19:30/53:23]  Acc_iter 26950       Data time: 0.15(0.15)  Forward time: 1.67(1.44)  Batch time: 1.82(1.59)
+2024-09-14 23:32:08,793   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 23:32:45,581   INFO  Train:   75/80 ( 94%) [ 211/362 ( 58%)]  Loss: 3.318 (3.24)  LR: 3.111e-04  Time cost: 05:37/04:00 [3:20:50/52:04]  Acc_iter 27000       Data time: 0.12(0.15)  Forward time: 1.32(1.44)  Batch time: 1.44(1.59)
+2024-09-14 23:32:45,801   INFO  
+2024-09-14 23:34:06,386   INFO  Train:   75/80 ( 94%) [ 261/362 ( 72%)]  Loss: 3.234 (3.24)  LR: 2.956e-04  Time cost: 06:58/02:41 [3:22:11/50:52]  Acc_iter 27050       Data time: 0.16(0.15)  Forward time: 1.65(1.45)  Batch time: 1.81(1.60)
+2024-09-14 23:35:26,279   INFO  Train:   75/80 ( 94%) [ 311/362 ( 86%)]  Loss: 3.038 (3.24)  LR: 2.805e-04  Time cost: 08:18/01:21 [3:23:30/49:33]  Acc_iter 27100       Data time: 0.12(0.15)  Forward time: 1.36(1.45)  Batch time: 1.48(1.60)
+2024-09-14 23:36:46,195   INFO  Train:   75/80 ( 94%) [ 361/362 (100%)]  Loss: 3.036 (3.24)  LR: 2.657e-04  Time cost: 09:38/00:01 [3:24:50/48:13]  Acc_iter 27150       Data time: 0.16(0.15)  Forward time: 0.30(1.45)  Batch time: 0.46(1.60)
+2024-09-14 23:36:46,416   INFO  
+2024-09-14 23:37:11,944   INFO  Train:   76/80 ( 95%) [   0/362 (  0%)]  Loss: 3.232 (3.23)  LR: 2.654e-04  Time cost: 00:02/13:59 [3:25:16/1:09:55]  Acc_iter 27151       Data time: 0.70(0.70)  Forward time: 1.49(1.49)  Batch time: 2.19(2.19)
+2024-09-14 23:38:28,788   INFO  Train:   76/80 ( 95%) [  49/362 ( 14%)]  Loss: 3.410 (3.28)  LR: 2.514e-04  Time cost: 01:19/08:15 [3:26:33/46:28]  Acc_iter 27200       Data time: 0.15(0.15)  Forward time: 1.48(1.43)  Batch time: 1.62(1.58)
+2024-09-14 23:39:49,944   INFO  Train:   76/80 ( 95%) [  99/362 ( 27%)]  Loss: 3.198 (3.25)  LR: 2.374e-04  Time cost: 02:40/07:01 [3:27:54/45:43]  Acc_iter 27250       Data time: 0.16(0.15)  Forward time: 1.40(1.45)  Batch time: 1.56(1.60)
+2024-09-14 23:41:09,222   INFO  Train:   76/80 ( 95%) [ 149/362 ( 41%)]  Loss: 3.206 (3.25)  LR: 2.239e-04  Time cost: 03:59/05:40 [3:29:13/44:13]  Acc_iter 27300       Data time: 0.13(0.15)  Forward time: 1.56(1.45)  Batch time: 1.69(1.60)
+2024-09-14 23:41:09,407   INFO  
+2024-09-14 23:42:10,196   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 23:42:30,672   INFO  Train:   76/80 ( 95%) [ 199/362 ( 55%)]  Loss: 3.188 (3.24)  LR: 2.107e-04  Time cost: 05:21/04:21 [3:30:35/43:06]  Acc_iter 27350       Data time: 0.13(0.15)  Forward time: 1.32(1.46)  Batch time: 1.45(1.60)
+2024-09-14 23:43:51,800   INFO  Train:   76/80 ( 95%) [ 249/362 ( 69%)]  Loss: 3.426 (3.25)  LR: 1.979e-04  Time cost: 06:42/03:01 [3:31:56/41:51]  Acc_iter 27400       Data time: 0.16(0.15)  Forward time: 1.39(1.46)  Batch time: 1.55(1.61)
+2024-09-14 23:45:12,794   INFO  Train:   76/80 ( 95%) [ 299/362 ( 83%)]  Loss: 3.349 (3.25)  LR: 1.855e-04  Time cost: 08:03/01:41 [3:33:17/40:33]  Acc_iter 27450       Data time: 0.14(0.15)  Forward time: 1.77(1.46)  Batch time: 1.91(1.61)
+2024-09-14 23:45:12,979   INFO  
+2024-09-14 23:46:30,684   INFO  Train:   76/80 ( 95%) [ 349/362 ( 96%)]  Loss: 3.265 (3.25)  LR: 1.735e-04  Time cost: 09:21/00:20 [3:34:35/39:02]  Acc_iter 27500       Data time: 0.12(0.15)  Forward time: 1.74(1.46)  Batch time: 1.86(1.60)
+2024-09-14 23:46:47,347   INFO  Train:   76/80 ( 95%) [ 361/362 (100%)]  Loss: 4.722 (3.25)  LR: 1.707e-04  Time cost: 09:37/00:01 [3:34:51/38:32]  Acc_iter 27512       Data time: 0.13(0.15)  Forward time: 0.30(1.45)  Batch time: 0.44(1.60)
+2024-09-14 23:47:10,092   INFO  Train:   77/80 ( 96%) [   0/362 (  0%)]  Loss: 3.264 (3.26)  LR: 1.705e-04  Time cost: 00:02/13:29 [3:35:14/53:59]  Acc_iter 27513       Data time: 0.83(0.83)  Forward time: 1.29(1.29)  Batch time: 2.12(2.12)
+2024-09-14 23:48:07,446   INFO  Train:   77/80 ( 96%) [  37/362 ( 10%)]  Loss: 3.435 (3.21)  LR: 1.619e-04  Time cost: 00:59/08:29 [3:36:12/36:52]  Acc_iter 27550       Data time: 0.15(0.16)  Forward time: 1.66(1.41)  Batch time: 1.81(1.56)
+2024-09-14 23:49:24,739   INFO  Train:   77/80 ( 96%) [  87/362 ( 24%)]  Loss: 3.185 (3.25)  LR: 1.507e-04  Time cost: 02:16/07:07 [3:37:29/35:17]  Acc_iter 27600       Data time: 0.12(0.15)  Forward time: 1.49(1.41)  Batch time: 1.61(1.55)
+2024-09-14 23:49:24,911   INFO  
+2024-09-14 23:50:45,359   INFO  Train:   77/80 ( 96%) [ 137/362 ( 38%)]  Loss: 3.230 (3.25)  LR: 1.399e-04  Time cost: 03:37/05:54 [3:38:49/34:26]  Acc_iter 27650       Data time: 0.15(0.15)  Forward time: 1.46(1.43)  Batch time: 1.61(1.58)
+2024-09-14 23:52:05,888   INFO  Train:   77/80 ( 96%) [ 187/362 ( 52%)]  Loss: 3.217 (3.25)  LR: 1.295e-04  Time cost: 04:58/04:37 [3:40:10/33:19]  Acc_iter 27700       Data time: 0.11(0.15)  Forward time: 1.76(1.44)  Batch time: 1.87(1.58)
+2024-09-14 23:52:09,104   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-14 23:53:24,551   INFO  Train:   77/80 ( 96%) [ 237/362 ( 65%)]  Loss: 3.104 (3.24)  LR: 1.195e-04  Time cost: 06:16/03:17 [3:41:29/31:56]  Acc_iter 27750       Data time: 0.13(0.15)  Forward time: 1.35(1.44)  Batch time: 1.48(1.58)
+2024-09-14 23:53:24,720   INFO  
+2024-09-14 23:54:46,319   INFO  Train:   77/80 ( 96%) [ 287/362 ( 79%)]  Loss: 3.478 (3.24)  LR: 1.099e-04  Time cost: 07:38/01:59 [3:42:50/30:48]  Acc_iter 27800       Data time: 0.16(0.15)  Forward time: 1.37(1.45)  Batch time: 1.53(1.59)
+2024-09-14 23:56:05,293   INFO  Train:   77/80 ( 96%) [ 337/362 ( 93%)]  Loss: 3.162 (3.23)  LR: 1.006e-04  Time cost: 08:57/00:39 [3:44:09/29:26]  Acc_iter 27850       Data time: 0.13(0.14)  Forward time: 1.38(1.44)  Batch time: 1.51(1.59)
+2024-09-14 23:56:42,149   INFO  Train:   77/80 ( 96%) [ 361/362 (100%)]  Loss: 2.573 (3.24)  LR: 9.635e-05  Time cost: 09:34/00:01 [3:44:46/28:44]  Acc_iter 27874       Data time: 0.15(0.14)  Forward time: 0.29(1.44)  Batch time: 0.44(1.59)
+2024-09-14 23:57:05,952   INFO  Train:   78/80 ( 98%) [   0/362 (  0%)]  Loss: 3.099 (3.10)  LR: 9.617e-05  Time cost: 00:02/14:52 [3:45:10/44:36]  Acc_iter 27875       Data time: 0.69(0.69)  Forward time: 1.63(1.63)  Batch time: 2.32(2.32)
+2024-09-14 23:57:44,763   INFO  Train:   78/80 ( 98%) [  25/362 (  7%)]  Loss: 3.331 (3.18)  LR: 9.181e-05  Time cost: 00:41/08:54 [3:45:49/28:04]  Acc_iter 27900       Data time: 0.16(0.16)  Forward time: 1.48(1.42)  Batch time: 1.63(1.58)
+2024-09-14 23:57:44,916   INFO  
+2024-09-14 23:59:05,447   INFO  Train:   78/80 ( 98%) [  75/362 ( 21%)]  Loss: 3.429 (3.24)  LR: 8.340e-05  Time cost: 02:01/07:40 [3:47:10/27:02]  Acc_iter 27950       Data time: 0.14(0.15)  Forward time: 1.51(1.45)  Batch time: 1.65(1.60)
+2024-09-15 00:00:28,934   INFO  Train:   78/80 ( 98%) [ 125/362 ( 35%)]  Loss: 3.227 (3.23)  LR: 7.538e-05  Time cost: 03:25/06:26 [3:48:33/26:06]  Acc_iter 28000       Data time: 0.15(0.15)  Forward time: 1.46(1.48)  Batch time: 1.60(1.63)
+2024-09-15 00:01:48,702   INFO  Train:   78/80 ( 98%) [ 175/362 ( 48%)]  Loss: 3.128 (3.22)  LR: 6.777e-05  Time cost: 04:45/05:03 [3:49:53/24:36]  Acc_iter 28050       Data time: 0.12(0.15)  Forward time: 1.34(1.47)  Batch time: 1.46(1.62)
+2024-09-15 00:01:48,850   INFO  
+2024-09-15 00:02:04,901   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-15 00:03:06,815   INFO  Train:   78/80 ( 98%) [ 225/362 ( 62%)]  Loss: 3.149 (3.23)  LR: 6.056e-05  Time cost: 06:03/03:40 [3:51:11/23:04]  Acc_iter 28100       Data time: 0.15(0.15)  Forward time: 1.48(1.46)  Batch time: 1.63(1.61)
+2024-09-15 00:04:24,575   INFO  Train:   78/80 ( 98%) [ 275/362 ( 76%)]  Loss: 3.407 (3.23)  LR: 5.375e-05  Time cost: 07:21/02:19 [3:52:29/21:36]  Acc_iter 28150       Data time: 0.15(0.15)  Forward time: 0.98(1.45)  Batch time: 1.13(1.60)
+2024-09-15 00:05:44,110   INFO  Train:   78/80 ( 98%) [ 325/362 ( 90%)]  Loss: 3.419 (3.24)  LR: 4.735e-05  Time cost: 08:40/00:59 [3:53:48/20:15]  Acc_iter 28200       Data time: 0.15(0.15)  Forward time: 1.35(1.45)  Batch time: 1.49(1.60)
+2024-09-15 00:05:44,260   INFO  
+2024-09-15 00:06:39,497   INFO  Train:   78/80 ( 98%) [ 361/362 (100%)]  Loss: 2.579 (3.24)  LR: 4.299e-05  Time cost: 09:36/00:01 [3:54:44/19:13]  Acc_iter 28236       Data time: 0.14(0.15)  Forward time: 0.18(1.45)  Batch time: 0.32(1.59)
+2024-09-15 00:07:02,882   INFO  Train:   79/80 ( 99%) [   0/362 (  0%)]  Loss: 3.285 (3.29)  LR: 4.288e-05  Time cost: 00:02/17:09 [3:55:07/34:18]  Acc_iter 28237       Data time: 0.68(0.68)  Forward time: 1.99(1.99)  Batch time: 2.67(2.67)
+2024-09-15 00:07:23,634   INFO  Train:   79/80 ( 99%) [  13/362 (  4%)]  Loss: 3.306 (3.23)  LR: 4.136e-05  Time cost: 00:23/09:48 [3:55:28/19:58]  Acc_iter 28250       Data time: 0.13(0.19)  Forward time: 1.32(1.49)  Batch time: 1.45(1.68)
+2024-09-15 00:08:44,102   INFO  Train:   79/80 ( 99%) [  63/362 ( 17%)]  Loss: 3.046 (3.23)  LR: 3.576e-05  Time cost: 01:44/08:06 [3:56:48/17:54]  Acc_iter 28300       Data time: 0.14(0.15)  Forward time: 1.37(1.47)  Batch time: 1.52(1.62)
+2024-09-15 00:10:00,203   INFO  Train:   79/80 ( 99%) [ 113/362 ( 31%)]  Loss: 3.384 (3.23)  LR: 3.058e-05  Time cost: 03:00/06:33 [3:58:04/16:05]  Acc_iter 28350       Data time: 0.12(0.15)  Forward time: 1.01(1.43)  Batch time: 1.13(1.58)
+2024-09-15 00:10:00,354   INFO  
+2024-09-15 00:11:19,103   INFO  Train:   79/80 ( 99%) [ 163/362 ( 45%)]  Loss: 3.372 (3.24)  LR: 2.580e-05  Time cost: 04:19/05:14 [3:59:23/14:46]  Acc_iter 28400       Data time: 0.18(0.15)  Forward time: 1.39(1.43)  Batch time: 1.57(1.58)
+2024-09-15 00:12:00,324   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-15 00:12:37,836   INFO  Train:   79/80 ( 99%) [ 213/362 ( 59%)]  Loss: 3.513 (3.24)  LR: 2.142e-05  Time cost: 05:37/03:55 [4:00:42/13:26]  Acc_iter 28450       Data time: 0.15(0.15)  Forward time: 1.60(1.43)  Batch time: 1.74(1.58)
+2024-09-15 00:13:57,774   INFO  Train:   79/80 ( 99%) [ 263/362 ( 73%)]  Loss: 3.320 (3.24)  LR: 1.746e-05  Time cost: 06:57/02:36 [4:02:02/12:09]  Acc_iter 28500       Data time: 0.16(0.15)  Forward time: 1.48(1.44)  Batch time: 1.65(1.58)
+2024-09-15 00:13:57,925   INFO  
+2024-09-15 00:15:19,929   INFO  Train:   79/80 ( 99%) [ 313/362 ( 86%)]  Loss: 3.243 (3.24)  LR: 1.390e-05  Time cost: 08:19/01:18 [4:03:24/10:54]  Acc_iter 28550       Data time: 0.13(0.15)  Forward time: 1.49(1.45)  Batch time: 1.62(1.59)
+2024-09-15 00:16:36,245   INFO  Train:   79/80 ( 99%) [ 361/362 (100%)]  Loss: 3.011 (3.24)  LR: 1.086e-05  Time cost: 09:36/00:01 [4:04:40/09:37]  Acc_iter 28598       Data time: 0.17(0.15)  Forward time: 0.30(1.45)  Batch time: 0.47(1.59)
+2024-09-15 00:16:59,609   INFO  Train:   80/80 (100%) [   0/362 (  0%)]  Loss: 3.286 (3.29)  LR: 1.081e-05  Time cost: 00:02/14:09 [4:05:04/14:09]  Acc_iter 28599       Data time: 0.60(0.60)  Forward time: 1.60(1.60)  Batch time: 2.21(2.21)
+2024-09-15 00:17:01,426   INFO  Train:   80/80 (100%) [   1/362 (  0%)]  Loss: 3.293 (3.29)  LR: 1.075e-05  Time cost: 00:04/12:31 [4:05:06/12:31]  Acc_iter 28600       Data time: 0.14(0.37)  Forward time: 1.66(1.63)  Batch time: 1.80(2.00)
+2024-09-15 00:18:19,253   INFO  Train:   80/80 (100%) [  51/362 ( 14%)]  Loss: 2.967 (3.25)  LR: 8.002e-06  Time cost: 01:21/08:10 [4:06:23/08:10]  Acc_iter 28650       Data time: 0.16(0.15)  Forward time: 1.53(1.42)  Batch time: 1.68(1.57)
+2024-09-15 00:18:19,396   INFO  
+2024-09-15 00:19:38,261   INFO  Train:   80/80 (100%) [ 101/362 ( 28%)]  Loss: 3.073 (3.24)  LR: 5.666e-06  Time cost: 02:40/06:51 [4:07:42/06:51]  Acc_iter 28700       Data time: 0.16(0.15)  Forward time: 1.17(1.43)  Batch time: 1.33(1.58)
+2024-09-15 00:20:57,667   INFO  Train:   80/80 (100%) [ 151/362 ( 42%)]  Loss: 3.300 (3.25)  LR: 3.738e-06  Time cost: 04:00/05:33 [4:09:02/05:33]  Acc_iter 28750       Data time: 0.13(0.15)  Forward time: 1.53(1.44)  Batch time: 1.67(1.58)
+2024-09-15 00:21:58,560   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-09-15 00:22:18,258   INFO  Train:   80/80 (100%) [ 201/362 ( 56%)]  Loss: 3.154 (3.24)  LR: 2.218e-06  Time cost: 05:20/04:15 [4:10:22/04:15]  Acc_iter 28800       Data time: 0.15(0.15)  Forward time: 1.44(1.44)  Batch time: 1.59(1.59)
+2024-09-15 00:22:18,399   INFO  
+2024-09-15 00:23:36,186   INFO  Train:   80/80 (100%) [ 251/362 ( 69%)]  Loss: 3.148 (3.24)  LR: 1.107e-06  Time cost: 06:38/02:55 [4:11:40/02:55]  Acc_iter 28850       Data time: 0.15(0.15)  Forward time: 1.33(1.44)  Batch time: 1.47(1.58)
+2024-09-15 00:24:56,888   INFO  Train:   80/80 (100%) [ 301/362 ( 83%)]  Loss: 3.507 (3.24)  LR: 4.041e-07  Time cost: 07:59/01:36 [4:13:01/01:36]  Acc_iter 28900       Data time: 0.12(0.15)  Forward time: 1.62(1.44)  Batch time: 1.73(1.59)
+2024-09-15 00:26:18,472   INFO  Train:   80/80 (100%) [ 351/362 ( 97%)]  Loss: 3.369 (3.23)  LR: 1.099e-07  Time cost: 09:21/00:17 [4:14:23/00:17]  Acc_iter 28950       Data time: 0.13(0.15)  Forward time: 1.65(1.45)  Batch time: 1.78(1.59)
+2024-09-15 00:26:18,615   INFO  
+2024-09-15 00:26:33,781   INFO  Train:   80/80 (100%) [ 361/362 (100%)]  Loss: 3.857 (3.23)  LR: 1.001e-07  Time cost: 09:36/00:01 [4:14:38/00:01]  Acc_iter 28960       Data time: 0.17(0.15)  Forward time: 0.28(1.45)  Batch time: 0.45(1.59)
+2024-09-15 00:26:36,124   INFO  **********************End training /pv_rcnn_plusplus(default)**********************
+
+
+
+2024-09-15 00:26:36,124   INFO  **********************Start evaluation /pv_rcnn_plusplus(default)**********************
+2024-09-15 00:26:36,126   INFO  Loading Fourseason dataset
+2024-09-15 00:26:36,136   INFO  Total samples for Fourseason dataset: 930
+2024-09-15 00:26:36,136   INFO  Loading Fourseason dataset
+2024-09-15 00:26:36,141   INFO  Total samples for Fourseason dataset: 930
+2024-09-15 00:26:36,144   INFO  ==> Loading parameters from checkpoint /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/checkpoint_epoch_80.pth to CPU
+2024-09-15 00:26:36,238   INFO  ==> Checkpoint trained from version: pcdet+0.6.0+8caccce
+2024-09-15 00:26:36,264   INFO  ==> Done (loaded 451/451)
+2024-09-15 00:26:36,276   INFO  *************** EPOCH 80 EVALUATION *****************
+2024-09-15 00:28:04,844   INFO  *************** Performance of EPOCH 80 *****************
+2024-09-15 00:28:04,844   INFO  Generate label finished(sec_per_example: 0.0952 second).
+2024-09-15 00:28:04,844   INFO  recall_roi_0.3: 0.787687
+2024-09-15 00:28:04,845   INFO  recall_rcnn_0.3: 0.787891
+2024-09-15 00:28:04,845   INFO  recall_roi_0.5: 0.638985
+2024-09-15 00:28:04,845   INFO  recall_rcnn_0.5: 0.653712
+2024-09-15 00:28:04,845   INFO  recall_roi_0.7: 0.319288
+2024-09-15 00:28:04,845   INFO  recall_rcnn_0.7: 0.378810
+2024-09-15 00:28:04,845   INFO  Average predicted number of objects(930 samples): 17.072
+2024-09-15 00:28:36,189   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:86.1526, 86.1526, 86.1526
+bev  AP:50.6094, 50.6094, 50.6094
+3d   AP:33.5394, 33.5394, 33.5394
+aos  AP:58.66, 58.66, 58.66
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:87.5790, 87.5790, 87.5790
+bev  AP:48.7926, 48.7926, 48.7926
+3d   AP:31.2354, 31.2354, 31.2354
+aos  AP:56.53, 56.53, 56.53
+Car AP@0.70, 0.50, 0.50:
+bbox AP:86.1526, 86.1526, 86.1526
+bev  AP:58.8387, 58.8387, 58.8387
+3d   AP:53.6508, 53.6508, 53.6508
+aos  AP:58.66, 58.66, 58.66
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:87.5790, 87.5790, 87.5790
+bev  AP:57.5669, 57.5669, 57.5669
+3d   AP:53.0594, 53.0594, 53.0594
+aos  AP:56.53, 56.53, 56.53
+Pedestrian AP@0.50, 0.50, 0.50:
+bbox AP:68.6468, 68.6468, 68.6468
+bev  AP:33.6735, 33.6735, 33.6735
+3d   AP:29.2460, 29.2460, 29.2460
+aos  AP:46.52, 46.52, 46.52
+Pedestrian AP_R40@0.50, 0.50, 0.50:
+bbox AP:68.1439, 68.1439, 68.1439
+bev  AP:30.1835, 30.1835, 30.1835
+3d   AP:25.2914, 25.2914, 25.2914
+aos  AP:46.04, 46.04, 46.04
+Pedestrian AP@0.50, 0.25, 0.25:
+bbox AP:68.6468, 68.6468, 68.6468
+bev  AP:43.2400, 43.2400, 43.2400
+3d   AP:42.8990, 42.8990, 42.8990
+aos  AP:46.52, 46.52, 46.52
+Pedestrian AP_R40@0.50, 0.25, 0.25:
+bbox AP:68.1439, 68.1439, 68.1439
+bev  AP:41.4897, 41.4897, 41.4897
+3d   AP:41.0023, 41.0023, 41.0023
+aos  AP:46.04, 46.04, 46.04
+Cyclist AP@0.50, 0.50, 0.50:
+bbox AP:29.3008, 29.3008, 29.3008
+bev  AP:12.8511, 12.8511, 12.8511
+3d   AP:10.9180, 10.9180, 10.9180
+aos  AP:15.64, 15.64, 15.64
+Cyclist AP_R40@0.50, 0.50, 0.50:
+bbox AP:25.5351, 25.5351, 25.5351
+bev  AP:5.2244, 5.2244, 5.2244
+3d   AP:3.4960, 3.4960, 3.4960
+aos  AP:15.79, 15.79, 15.79
+Cyclist AP@0.50, 0.25, 0.25:
+bbox AP:29.3008, 29.3008, 29.3008
+bev  AP:15.1366, 15.1366, 15.1366
+3d   AP:15.0784, 15.0784, 15.0784
+aos  AP:15.64, 15.64, 15.64
+Cyclist AP_R40@0.50, 0.25, 0.25:
+bbox AP:25.5351, 25.5351, 25.5351
+bev  AP:8.2817, 8.2817, 8.2817
+3d   AP:8.0265, 8.0265, 8.0265
+aos  AP:15.79, 15.79, 15.79
+
+2024-09-15 00:28:36,191   INFO  Result is saved to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/eval/eval_with_train/epoch_80/val
+2024-09-15 00:28:36,191   INFO  ****************Evaluation done.*****************
+2024-09-15 00:28:36,198   INFO  Epoch 80 has been evaluated
+2024-09-15 00:29:06,229   INFO  **********************End evaluation /pv_rcnn_plusplus(default)**********************

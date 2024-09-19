@@ -10,6 +10,7 @@ import numpy as np
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
+import warnings
 
 
 def check_numpy_to_torch(x):
@@ -78,6 +79,29 @@ def angle2matrix(angle):
 def mask_points_by_range(points, limit_range):
     mask = (points[:, 0] >= limit_range[0]) & (points[:, 0] <= limit_range[3]) \
            & (points[:, 1] >= limit_range[1]) & (points[:, 1] <= limit_range[4])
+    return mask
+
+
+def filter_points_in_FOV(points, min_angle=15, max_angle=165):
+    """
+    Filter points in a point cloud that are within a specific angular range with respect to the x-axis.
+    
+    :param points: numpy array of shape (N, 3), where N is the number of points, and each point is (x, y, z).
+    :param min_angle: minimum angle in degrees (default is 15).
+    :param max_angle: maximum angle in degrees (default is 165).
+    :return: filtered points within the specified angular range.
+    """
+    # Convert angles to radians
+    min_angle_rad = np.deg2rad(min_angle)
+    max_angle_rad = np.deg2rad(max_angle)
+    
+    # Calculate the angle of each point with respect to the x-axis
+    angles = np.arctan2(points[:, 1], points[:, 0])
+    angles = np.mod(angles + 2 * np.pi, 2 * np.pi)
+    
+    # Filter points based on the angular range
+    mask = (angles >= min_angle_rad) & (angles <= max_angle_rad)
+    
     return mask
 
 
@@ -186,21 +210,53 @@ def init_dist_slurm(tcp_port, local_rank, backend='nccl'):
     return total_gpus, rank
 
 
+# def init_dist_pytorch(tcp_port, local_rank, backend='nccl'):
+#     if mp.get_start_method(allow_none=True) is None:
+#         mp.set_start_method('spawn')
+#     # os.environ['MASTER_PORT'] = str(tcp_port)
+#     # os.environ['MASTER_ADDR'] = 'localhost'
+#     num_gpus = torch.cuda.device_count()
+#     torch.cuda.set_device(local_rank % num_gpus)
+
+#     dist.init_process_group(
+#         backend=backend,
+#         # init_method='tcp://127.0.0.1:%d' % tcp_port,
+#         # rank=local_rank,
+#         # world_size=num_gpus
+#     )
+#     rank = dist.get_rank()
+#     return num_gpus, rank
+
+
+# def init_dist_pytorch(tcp_port, local_rank, backend='nccl'):
+#    if mp.get_start_method(allow_none=True) is None:
+#        mp.set_start_method('spawn')
+#    num_gpus = torch.cuda.device_count()
+
+#    dist.init_process_group(
+#        backend=backend,
+#    )
+
+#    rank = dist.get_rank()
+#    torch.cuda.set_device(rank % num_gpus)
+#    return num_gpus, rank
+
+
 def init_dist_pytorch(tcp_port, local_rank, backend='nccl'):
     if mp.get_start_method(allow_none=True) is None:
         mp.set_start_method('spawn')
-    # os.environ['MASTER_PORT'] = str(tcp_port)
-    # os.environ['MASTER_ADDR'] = 'localhost'
     num_gpus = torch.cuda.device_count()
-    torch.cuda.set_device(local_rank % num_gpus)
 
     dist.init_process_group(
         backend=backend,
-        # init_method='tcp://127.0.0.1:%d' % tcp_port,
-        # rank=local_rank,
-        # world_size=num_gpus
     )
+
+    warnings.filterwarnings("ignore", category=FutureWarning)
+    warnings.filterwarnings("ignore", category=UserWarning)
+
+    torch.set_warn_always(False)
     rank = dist.get_rank()
+    torch.cuda.set_device(rank % num_gpus)
     return num_gpus, rank
 
 

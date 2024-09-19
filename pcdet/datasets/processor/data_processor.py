@@ -76,31 +76,48 @@ class DataProcessor(object):
             cur_processor = getattr(self, cur_cfg.NAME)(config=cur_cfg)
             self.data_processor_queue.append(cur_processor)
 
-    def mask_points_and_boxes_outside_range(self, data_dict=None, config=None):
+    def mask_points_and_boxes_outside_range(self, data_dict=None, config=None, DA = False):
         if data_dict is None:
             return partial(self.mask_points_and_boxes_outside_range, config=config)
 
-        if data_dict.get('points', None) is not None:
-            mask = common_utils.mask_points_by_range(data_dict['points'], self.point_cloud_range)
-            data_dict['points'] = data_dict['points'][mask]
+        if DA is False:
+            if data_dict.get('points', None) is not None:
+                mask = common_utils.mask_points_by_range(data_dict['points'], self.point_cloud_range)
+                data_dict['points'] = data_dict['points'][mask]
 
-        if data_dict.get('gt_boxes', None) is not None and config.REMOVE_OUTSIDE_BOXES and self.training:
-            mask = box_utils.mask_boxes_outside_range_numpy(
-                data_dict['gt_boxes'], self.point_cloud_range, min_num_corners=config.get('min_num_corners', 1), 
-                use_center_to_filter=config.get('USE_CENTER_TO_FILTER', True)
-            )
-            data_dict['gt_boxes'] = data_dict['gt_boxes'][mask]
+            if data_dict.get('gt_boxes', None) is not None and config.REMOVE_OUTSIDE_BOXES and self.training:
+                mask = box_utils.mask_boxes_outside_range_numpy(
+                    data_dict['gt_boxes'], self.point_cloud_range, min_num_corners=config.get('min_num_corners', 1), 
+                    use_center_to_filter=config.get('USE_CENTER_TO_FILTER', True)
+                )
+                data_dict['gt_boxes'] = data_dict['gt_boxes'][mask]
+                data_dict['gt_names'] = data_dict['gt_names'][mask]
+        #######################################################################################################
+
+        else:
+            if data_dict.get('points_T', None) is not None:
+                mask_T = common_utils.mask_points_by_range(data_dict['points_T'], self.point_cloud_range)
+                data_dict['points_T'] = data_dict['points_T'][mask_T]
+
         return data_dict
 
-    def shuffle_points(self, data_dict=None, config=None):
+    def shuffle_points(self, data_dict=None, config=None, DA = False):
         if data_dict is None:
             return partial(self.shuffle_points, config=config)
 
-        if config.SHUFFLE_ENABLED[self.mode]:
-            points = data_dict['points']
-            shuffle_idx = np.random.permutation(points.shape[0])
-            points = points[shuffle_idx]
-            data_dict['points'] = points
+        if DA is False:
+            if config.SHUFFLE_ENABLED[self.mode]:
+                points = data_dict['points']
+                shuffle_idx = np.random.permutation(points.shape[0])
+                points = points[shuffle_idx]
+                data_dict['points'] = points
+        else:
+             if config.SHUFFLE_ENABLED[self.mode] and data_dict['points_T'] is not None:
+                points_T = data_dict['points_T']
+                shuffle_idx_T = np.random.permutation(points_T.shape[0])
+                points_T = points_T[shuffle_idx_T]
+                data_dict['points_T'] = points_T           
+
 
         return data_dict
 
@@ -130,7 +147,7 @@ class DataProcessor(object):
 
         return points_yflip, points_xflip, points_xyflip
 
-    def transform_points_to_voxels(self, data_dict=None, config=None):
+    def transform_points_to_voxels(self, data_dict=None, config=None, DA = False):
         if data_dict is None:
             grid_size = (self.point_cloud_range[3:6] - self.point_cloud_range[0:3]) / np.array(config.VOXEL_SIZE)
             self.grid_size = np.round(grid_size).astype(np.int64)
@@ -148,9 +165,16 @@ class DataProcessor(object):
                 max_num_voxels=config.MAX_NUMBER_OF_VOXELS[self.mode],
             )
 
-        points = data_dict['points']
-        voxel_output = self.voxel_generator.generate(points)
-        voxels, coordinates, num_points = voxel_output
+        if DA is False:
+            points = data_dict['points']
+        else:
+            points = data_dict['points_T']
+        
+        if points is None:
+            voxels, coordinates, num_points = None, None, None
+        else:
+            voxel_output = self.voxel_generator.generate(points)
+            voxels, coordinates, num_points = voxel_output
 
         if not data_dict['use_lead_xyz']:
             voxels = voxels[..., 3:]  # remove xyz in voxels(N, 3)
@@ -174,9 +198,14 @@ class DataProcessor(object):
             data_dict['voxel_coords'] = voxel_coords_list
             data_dict['voxel_num_points'] = voxel_num_points_list
         else:
-            data_dict['voxels'] = voxels
-            data_dict['voxel_coords'] = coordinates
-            data_dict['voxel_num_points'] = num_points
+            if DA is False:
+                data_dict['voxels'] = voxels
+                data_dict['voxel_coords'] = coordinates
+                data_dict['voxel_num_points'] = num_points
+            else:
+                data_dict['voxels_T'] = voxels
+                data_dict['voxel_coords_T'] = coordinates
+                data_dict['voxel_num_points_T'] = num_points
         return data_dict
 
     def sample_points(self, data_dict=None, config=None):
@@ -280,7 +309,7 @@ class DataProcessor(object):
         data_dict["img_aug_matrix"] = transforms
         return data_dict
 
-    def forward(self, data_dict):
+    def forward(self, data_dict, DA= False):
         """
         Args:
             data_dict:
@@ -293,6 +322,6 @@ class DataProcessor(object):
         """
 
         for cur_processor in self.data_processor_queue:
-            data_dict = cur_processor(data_dict=data_dict)
+            data_dict = cur_processor(data_dict=data_dict, DA = DA)
 
         return data_dict

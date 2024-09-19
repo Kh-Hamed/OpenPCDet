@@ -368,6 +368,8 @@ class CenterHead(nn.Module):
     def reorder_rois_for_refining(batch_size, pred_dicts):
         num_max_rois = max([len(cur_dict['pred_boxes']) for cur_dict in pred_dicts])
         num_max_rois = max(1, num_max_rois)  # at least one faked rois to avoid error
+        # if num_max_rois < 500:
+        #     print("HHHHHHHHHHHHHHHHHHHHHHHHHHH")
         pred_boxes = pred_dicts[0]['pred_boxes']
 
         rois = pred_boxes.new_zeros((batch_size, num_max_rois, pred_boxes.shape[-1]))
@@ -396,16 +398,33 @@ class CenterHead(nn.Module):
                 feature_map_stride=data_dict.get('spatial_features_2d_strides', None)
             )
             self.forward_ret_dict['target_dicts'] = target_dict
+        ############################################################################
+        bs = data_dict['batch_size']
+        pred = {}
+        pred_dict = []
+        for index, item in enumerate(pred_dicts):
+            for index, (key, value) in enumerate(item.items()):
+                pred[key] = value[0:bs]
+            pred_dict.append(pred)
 
-        self.forward_ret_dict['pred_dicts'] = pred_dicts
+        ############################################################################
+        self.forward_ret_dict['pred_dicts'] = pred_dict
 
         if not self.training or self.predict_boxes_when_training:
+            # pred_dicts = self.generate_predicted_boxes(
+            #     data_dict['batch_size'], pred_dicts
+            # )
+            ########################################################
             pred_dicts = self.generate_predicted_boxes(
-                data_dict['batch_size'], pred_dicts
+                data_dict['spatial_features'].shape[0], pred_dicts
             )
+            #########################################################
 
             if self.predict_boxes_when_training:
-                rois, roi_scores, roi_labels = self.reorder_rois_for_refining(data_dict['batch_size'], pred_dicts)
+                # rois, roi_scores, roi_labels = self.reorder_rois_for_refining(data_dict['batch_size'], pred_dicts)
+                ######################################################################################################
+                rois, roi_scores, roi_labels = self.reorder_rois_for_refining(data_dict['spatial_features'].shape[0], pred_dicts)
+                #####################################################################################################
                 data_dict['rois'] = rois
                 data_dict['roi_scores'] = roi_scores
                 data_dict['roi_labels'] = roi_labels

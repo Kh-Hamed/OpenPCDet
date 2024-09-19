@@ -5,6 +5,10 @@ import torch.nn.functional as F
 
 from . import box_utils
 from pcdet.ops.iou3d_nms import iou3d_nms_utils
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=UserWarning)
+torch.set_warn_always(False)
 
 
 class SigmoidFocalClassificationLoss(nn.Module):

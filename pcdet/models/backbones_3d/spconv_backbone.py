@@ -137,8 +137,20 @@ class VoxelBackBone8x(nn.Module):
             batch_dict:
                 encoded_spconv_tensor: sparse tensor
         """
-        voxel_features, voxel_coords = batch_dict['voxel_features'], batch_dict['voxel_coords']
-        batch_size = batch_dict['batch_size']
+        ####################################################################################################
+        # voxel_features, voxel_coords = batch_dict['voxel_features'], batch_dict['voxel_coords']
+        import torch
+        if batch_dict.get('voxel_coords_T', None) != None:
+            voxel_features, voxel_coord, voxel_coord_T = batch_dict['voxel_features'], batch_dict['voxel_coords'], batch_dict['voxel_coords_T'].clone()
+            voxel_coord_T[:, 0] = voxel_coord_T[:, 0] + voxel_coord[-1, 0] + 1
+            voxel_coords = torch.concatenate([voxel_coord, voxel_coord_T], axis=0)
+        else:
+            voxel_features, voxel_coords = batch_dict['voxel_features'], batch_dict['voxel_coords']
+
+            
+        batch_size = int(voxel_coords[-1,0] + 1)
+        #####################################################################################################
+        # batch_size = batch_dict['batch_size']
         input_sp_tensor = spconv.SparseConvTensor(
             features=voxel_features,
             indices=voxel_coords.int(),
@@ -147,6 +159,13 @@ class VoxelBackBone8x(nn.Module):
         )
 
         x = self.conv_input(input_sp_tensor)
+        ##########################################################33
+        # encoded_spconv_tensor = x
+        # spatial_features = encoded_spconv_tensor.dense()
+        # N, C, D, H, W = spatial_features.shape
+        # spatial_features = spatial_features.view(N, C * D, H, W)
+
+        #########################################################
 
         x_conv1 = self.conv1(x)
         x_conv2 = self.conv2(x_conv1)

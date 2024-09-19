@@ -19,6 +19,9 @@ class DatasetTemplate(torch_data.Dataset):
         self.class_names = class_names
         self.logger = logger
         self.root_path = root_path if root_path is not None else Path(self.dataset_cfg.DATA_PATH)
+        ############################# DA ##########################################################33
+        self.root_path_T = Path(self.dataset_cfg.DATA_PATH_T)
+        ############################################################################################
         self.logger = logger
         if self.dataset_cfg is None or class_names is None:
             return
@@ -57,6 +60,11 @@ class DatasetTemplate(torch_data.Dataset):
 
     def __setstate__(self, d):
         self.__dict__.update(d)
+        del d['logger']
+        return d
+
+    def __setstate__(self, d):
+        self.__dict__.update(d)
 
     def generate_prediction_dicts(self, batch_dict, pred_dicts, class_names, output_path=None):
         """
@@ -89,6 +97,9 @@ class DatasetTemplate(torch_data.Dataset):
             pred_dict = get_template_prediction(pred_scores.shape[0])
             if pred_scores.shape[0] == 0:
                 return pred_dict
+
+            if self.dataset_cfg.get('SHIFT_COOR', None):
+                pred_boxes[:, 0:3] -= self.dataset_cfg.SHIFT_COOR
 
             pred_dict['name'] = np.array(class_names)[pred_labels - 1]
             pred_dict['score'] = pred_scores
@@ -195,25 +206,38 @@ class DatasetTemplate(torch_data.Dataset):
             selected = common_utils.keep_arrays_by_name(data_dict['gt_names'], self.class_names)
             data_dict['gt_boxes'] = data_dict['gt_boxes'][selected]
             data_dict['gt_names'] = data_dict['gt_names'][selected]
-            gt_classes = np.array([self.class_names.index(n) + 1 for n in data_dict['gt_names']], dtype=np.int32)
-            gt_boxes = np.concatenate((data_dict['gt_boxes'], gt_classes.reshape(-1, 1).astype(np.float32)), axis=1)
-            data_dict['gt_boxes'] = gt_boxes
+            if data_dict['gt_boxes'].shape[0]:
+                gt_classes = np.array([self.class_names.index(n) + 1 for n in data_dict['gt_names']], dtype=np.int32)
+                gt_boxes = np.concatenate((data_dict['gt_boxes'], gt_classes.reshape(-1, 1).astype(np.float32)), axis=1)
+                data_dict['gt_boxes'] = gt_boxes
 
             if data_dict.get('gt_boxes2d', None) is not None:
                 data_dict['gt_boxes2d'] = data_dict['gt_boxes2d'][selected]
 
         if data_dict.get('points', None) is not None:
             data_dict = self.point_feature_encoder.forward(data_dict)
+        ############################################################################
+        if data_dict.get('points_T', None) is not None:
+            data_dict = self.point_feature_encoder.forward(data_dict, DA = True)
+
+        #############################################################################
 
         data_dict = self.data_processor.forward(
             data_dict=data_dict
         )
+        ############################################################################
+        data_dict = self.data_processor.forward(
+            data_dict=data_dict, DA = True
+        )
+
+        #############################################################################
 
         if self.training and len(data_dict['gt_boxes']) == 0:
             new_index = np.random.randint(self.__len__())
             return self.__getitem__(new_index)
 
-        data_dict.pop('gt_names', None)
+        if self.training:
+            data_dict.pop('gt_names', None)
 
         return data_dict
 
@@ -315,6 +339,31 @@ class DatasetTemplate(torch_data.Dataset):
                     ret[key] = np.stack(points, axis=0)
                 elif key in ['camera_imgs']:
                     ret[key] = torch.stack([torch.stack(imgs,dim=0) for imgs in val],dim=0)
+
+                elif key in ['points_T', 'voxel_coords_T']:
+                    coors = []
+                    if isinstance(val[0], list):
+                        val =  [i for item in val for i in item]
+                    filtered_val = [v for v in val if v is not None]
+                    for i, coor in enumerate(filtered_val):
+                        if coor is not None:
+                            coor_pad = np.pad(coor, ((0, 0), (1, 0)), mode='constant', constant_values=i)
+                            coors.append(coor_pad)
+                    if coors == []:
+                        # print("HHHHHHHHHHHHHHHHHHHHHHHHH")
+                        continue
+                    ret[key] = np.concatenate(coors, axis=0)
+
+                elif key in ['voxels_T', 'voxel_num_points_T']:
+                    if isinstance(val[0], list):
+                        batch_size_ratio = len(val[0])
+                        val = [i for item in val for i in item]
+                    filtered_val = [v for v in val if v is not None]
+                    if filtered_val == []:
+                        # print("HHHHHHHHHHHHHHHHHHHHHHHHH")
+                        continue
+                    ret[key] = np.concatenate(filtered_val, axis=0)
+
                 else:
                     ret[key] = np.stack(val, axis=0)
             except:

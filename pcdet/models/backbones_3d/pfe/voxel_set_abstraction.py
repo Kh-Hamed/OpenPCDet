@@ -232,10 +232,17 @@ class VoxelSetAbstraction(nn.Module):
         Returns:
             keypoints: (N1 + N2 + ..., 4), where 4 indicates [bs_idx, x, y, z]
         """
-        batch_size = batch_dict['batch_size']
+        # batch_size = batch_dict['batch_size']
+        batch_size = batch_dict['rois'].shape[0]
         if self.model_cfg.POINT_SOURCE == 'raw_points':
             src_points = batch_dict['points'][:, 1:4]
             batch_indices = batch_dict['points'][:, 0].long()
+            ##################################################################################3
+            if batch_dict.get('points_T', None) != None:
+                src_points_T = batch_dict['points_T'][:, 1:4]
+                batch_indices_T = (batch_dict['points_T'][:, 0] + batch_dict['batch_size']).long()
+                src_points, batch_indices = torch.cat((src_points, src_points_T)), torch.cat((batch_indices, batch_indices_T))
+            ###################################################################################
         elif self.model_cfg.POINT_SOURCE == 'voxel_centers':
             src_points = common_utils.get_voxel_centers(
                 batch_dict['voxel_coords'][:, 1:4],
@@ -327,7 +334,7 @@ class VoxelSetAbstraction(nn.Module):
             xyz_batch_cnt=xyz_batch_cnt,
             new_xyz=new_xyz,
             new_xyz_batch_cnt=new_xyz_batch_cnt,
-            features=xyz_features.contiguous(),
+            features=xyz_features.contiguous() if xyz_features is not None else xyz.contiguous(),
         )
         return pooled_features
 
@@ -353,13 +360,22 @@ class VoxelSetAbstraction(nn.Module):
 
         point_features_list = []
         if 'bev' in self.model_cfg.FEATURES_SOURCE:
+            # point_bev_features = self.interpolate_from_bev_features(
+            #     keypoints, batch_dict['spatial_features'], batch_dict['batch_size'],
+            #     bev_stride=batch_dict['spatial_features_stride']
+            # )
+            ##################################################################################33
             point_bev_features = self.interpolate_from_bev_features(
-                keypoints, batch_dict['spatial_features'], batch_dict['batch_size'],
+                keypoints, batch_dict['spatial_features'], batch_dict['rois'].shape[0],
                 bev_stride=batch_dict['spatial_features_stride']
             )
+            ##################################################################################
             point_features_list.append(point_bev_features)
 
-        batch_size = batch_dict['batch_size']
+        # batch_size = batch_dict['batch_size']
+        ###################################################################################
+        batch_size = batch_dict['rois'].shape[0]
+        ###################################################################################
 
         new_xyz = keypoints[:, 1:4].contiguous()
         new_xyz_batch_cnt = new_xyz.new_zeros(batch_size).int()
@@ -368,6 +384,12 @@ class VoxelSetAbstraction(nn.Module):
 
         if 'raw_points' in self.model_cfg.FEATURES_SOURCE:
             raw_points = batch_dict['points']
+            #####################################################################################
+            if batch_dict.get('points_T', None) != None:
+                raw_points_T = batch_dict['points_T']
+                raw_points_T[:, 0] = raw_points_T[:, 0] + batch_dict['batch_size']
+                raw_points = torch.cat((raw_points, raw_points_T))
+            #####################################################################################
 
             pooled_features = self.aggregate_keypoint_features_from_one_source(
                 batch_size=batch_size, aggregate_func=self.SA_rawpoints,

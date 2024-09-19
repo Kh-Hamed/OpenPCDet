@@ -72,6 +72,9 @@ class PointHeadTemplate(nn.Module):
         assert set_ignore_flag != use_ball_constraint, 'Choose one only!'
         batch_size = gt_boxes.shape[0]
         bs_idx = points[:, 0]
+        ########################################################################################
+        mask = (points[:, 0] < gt_boxes.shape[0]).detach()
+        #######################################################################################
         point_cls_labels = points.new_zeros(points.shape[0]).long()
         point_box_labels = gt_boxes.new_zeros((points.shape[0], 8)) if ret_box_labels else None
         point_part_labels = gt_boxes.new_zeros((points.shape[0], 3)) if ret_part_labels else None
@@ -122,6 +125,9 @@ class PointHeadTemplate(nn.Module):
                 point_part_labels[bs_mask] = point_part_labels_single
 
         targets_dict = {
+            ##################################################
+            'mask' : mask,
+            #####################################################
             'point_cls_labels': point_cls_labels,
             'point_box_labels': point_box_labels,
             'point_part_labels': point_part_labels
@@ -129,8 +135,12 @@ class PointHeadTemplate(nn.Module):
         return targets_dict
 
     def get_cls_layer_loss(self, tb_dict=None):
-        point_cls_labels = self.forward_ret_dict['point_cls_labels'].view(-1)
-        point_cls_preds = self.forward_ret_dict['point_cls_preds'].view(-1, self.num_class)
+        # point_cls_labels = self.forward_ret_dict['point_cls_labels'].view(-1)
+        # point_cls_preds = self.forward_ret_dict['point_cls_preds'].view(-1, self.num_class)
+        ##########################################################################################
+        point_cls_labels = self.forward_ret_dict['point_cls_labels'][self.forward_ret_dict['mask']].view(-1)
+        point_cls_preds = self.forward_ret_dict['point_cls_preds'][self.forward_ret_dict['mask']].view(-1, self.num_class)
+        #########################################################################################
 
         positives = (point_cls_labels > 0)
         negative_cls_weights = (point_cls_labels == 0) * 1.0

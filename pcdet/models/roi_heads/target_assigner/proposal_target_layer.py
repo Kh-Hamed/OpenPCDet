@@ -73,20 +73,22 @@ class ProposalTargetLayer(nn.Module):
         Returns:
         
         """
-        batch_size = batch_dict['batch_size']
+        batch_size = batch_dict['rois'].shape[0]
         rois = batch_dict['rois']
+        # if rois.shape[1] < 500:
+        #     print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")         
         roi_scores = batch_dict['roi_scores']
         roi_labels = batch_dict['roi_labels']
         gt_boxes = batch_dict['gt_boxes']
 
         code_size = rois.shape[-1]
         batch_rois = rois.new_zeros(batch_size, self.roi_sampler_cfg.ROI_PER_IMAGE, code_size)
-        batch_gt_of_rois = rois.new_zeros(batch_size, self.roi_sampler_cfg.ROI_PER_IMAGE, code_size + 1)
-        batch_roi_ious = rois.new_zeros(batch_size, self.roi_sampler_cfg.ROI_PER_IMAGE)
+        batch_gt_of_rois = rois.new_zeros(batch_dict['batch_size'], self.roi_sampler_cfg.ROI_PER_IMAGE, code_size + 1)
+        batch_roi_ious = rois.new_zeros(batch_dict['batch_size'], self.roi_sampler_cfg.ROI_PER_IMAGE)
         batch_roi_scores = rois.new_zeros(batch_size, self.roi_sampler_cfg.ROI_PER_IMAGE)
         batch_roi_labels = rois.new_zeros((batch_size, self.roi_sampler_cfg.ROI_PER_IMAGE), dtype=torch.long)
 
-        for index in range(batch_size):
+        for index in range(batch_dict['batch_size']):
             cur_roi, cur_gt, cur_roi_labels, cur_roi_scores = \
                 rois[index], gt_boxes[index], roi_labels[index], roi_scores[index]
             k = cur_gt.__len__() - 1
@@ -111,7 +113,22 @@ class ProposalTargetLayer(nn.Module):
             batch_roi_ious[index] = max_overlaps[sampled_inds]
             batch_roi_scores[index] = cur_roi_scores[sampled_inds]
             batch_gt_of_rois[index] = cur_gt[gt_assignment[sampled_inds]]
-
+        #####################################################################################################
+        for index in range(batch_dict['batch_size'], batch_size):
+            cur_roi, cur_roi_labels, cur_roi_scores = \
+                rois[index], roi_labels[index], roi_scores[index]
+            
+            # sorted_scores, indices = torch.sort(cur_roi_scores, descending=True)
+            # selected_indices = torch.randperm(cur_roi_scores.size(0))[:torch.min(torch.tensor([self.roi_sampler_cfg.ROI_PER_IMAGE, cur_roi.shape[0]]))]    
+            # cur_roi, cur_roi_labels, cur_roi_scores = cur_roi[indices], cur_roi_labels[indices], cur_roi_scores[indices] 
+            # if cur_roi.shape[0] <128:
+            #     print('HHHHHHHHHHHHHHHHHHHHHh')
+            selected_indices = torch.randint(low=0, high=cur_roi.shape[0], size=(self.roi_sampler_cfg.ROI_PER_IMAGE,)).long()
+            batch_rois[index] = cur_roi[selected_indices]
+            batch_roi_labels[index] = cur_roi_labels[selected_indices]
+            batch_roi_scores[index] = cur_roi_scores[sampled_inds]
+        # bg_inds = easy_bg_inds[rand_idx]
+        ######################################################################################################
         return batch_rois, batch_gt_of_rois, batch_roi_ious, batch_roi_scores, batch_roi_labels
 
     def subsample_rois(self, max_overlaps):

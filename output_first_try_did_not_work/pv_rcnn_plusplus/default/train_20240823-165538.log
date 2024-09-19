@@ -1,0 +1,733 @@
+2024-08-23 16:55:38,038   INFO  **********************Start logging**********************
+2024-08-23 16:55:38,039   INFO  CUDA_VISIBLE_DEVICES=1
+2024-08-23 16:55:38,039   INFO  Training in distributed mode : total_batch_size: 6
+2024-08-23 16:55:38,039   INFO  cfg_file         /space/userfiles/khatouna/OpenPCdet_FS_DA/tools/cfgs/FS_models/pv_rcnn_plusplus.yaml
+2024-08-23 16:55:38,039   INFO  batch_size       6
+2024-08-23 16:55:38,039   INFO  epochs           80
+2024-08-23 16:55:38,039   INFO  workers          4
+2024-08-23 16:55:38,039   INFO  extra_tag        default
+2024-08-23 16:55:38,039   INFO  ckpt             None
+2024-08-23 16:55:38,039   INFO  pretrained_model None
+2024-08-23 16:55:38,039   INFO  launcher         pytorch
+2024-08-23 16:55:38,039   INFO  tcp_port         18888
+2024-08-23 16:55:38,039   INFO  sync_bn          False
+2024-08-23 16:55:38,039   INFO  fix_random_seed  False
+2024-08-23 16:55:38,039   INFO  ckpt_save_interval 1
+2024-08-23 16:55:38,039   INFO  local_rank       0
+2024-08-23 16:55:38,039   INFO  max_ckpt_save_num 30
+2024-08-23 16:55:38,039   INFO  merge_all_iters_to_one_epoch False
+2024-08-23 16:55:38,039   INFO  set_cfgs         None
+2024-08-23 16:55:38,039   INFO  max_waiting_mins 0
+2024-08-23 16:55:38,039   INFO  start_epoch      0
+2024-08-23 16:55:38,039   INFO  num_epochs_to_eval 0
+2024-08-23 16:55:38,039   INFO  save_to_file     False
+2024-08-23 16:55:38,039   INFO  use_tqdm_to_record False
+2024-08-23 16:55:38,039   INFO  logger_iter_interval 50
+2024-08-23 16:55:38,039   INFO  ckpt_save_time_interval 300
+2024-08-23 16:55:38,039   INFO  wo_gpu_stat      False
+2024-08-23 16:55:38,039   INFO  use_amp          False
+2024-08-23 16:55:38,039   INFO  cfg.ROOT_DIR: /space/userfiles/khatouna/OpenPCdet_FS_DA
+2024-08-23 16:55:38,039   INFO  cfg.LOCAL_RANK: 0
+2024-08-23 16:55:38,039   INFO  cfg.CLASS_NAMES: ['Car', 'Pedestrian', 'Bike']
+2024-08-23 16:55:38,040   INFO  ----------- DATA_CONFIG -----------
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.DATASET: FourSeasonDataset
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.DATA_PATH: /space/userfiles/khatouna/OpenPCDet_FS/data/fourseason/ImageSets/2023_late_summer
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.PATH_LIDAR: /egr/research-canvas/four_seasons/dataset/2023_late_summer/oust
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.PATH_LABEL: /egr/research-canvas/detection3d_datasets/four_seasons/imerit_check/label3d/2023_late_summer
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.DATA_PATH_T: /space/userfiles/khatouna/OpenPCDet_FS/data/fourseason/ImageSets/2022_rain
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.PATH_LIDAR_T: /egr/research-canvas/four_seasons/dataset/2022_rain/oust
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.POINT_CLOUD_RANGE: [-75.2, -75.2, -4, 75.2, 75.2, 2]
+2024-08-23 16:55:38,040   INFO  ----------- INFO_PATH -----------
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.INFO_PATH.train: ['fs_infos_train.pkl']
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.INFO_PATH.test: ['fs_infos_val.pkl']
+2024-08-23 16:55:38,040   INFO  ----------- DATA_SPLIT -----------
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.DATA_SPLIT.train: train
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.DATA_SPLIT.test: val
+2024-08-23 16:55:38,040   INFO  ----------- SAMPLED_INTERVAL -----------
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.SAMPLED_INTERVAL.train: 5
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.SAMPLED_INTERVAL.test: 1
+2024-08-23 16:55:38,040   INFO  ----------- DATA_AUGMENTOR -----------
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.DATA_AUGMENTOR.DISABLE_AUG_LIST: ['place_holder']
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.DATA_AUGMENTOR.AUG_CONFIG_LIST: [{'NAME': 'gt_sampling', 'GROUND_HEIGHT': -1.95, 'DB_INFO_PATH': ['/space/userfiles/khatouna/OpenPCDet_FS/data/fourseason/ImageSets/2023_late_summer/fs_dbinfos_train_sampled_1.pkl'], 'PREPARE': {'filter_by_min_points': ['Car:5', 'Pedestrian:5', 'Bike:5']}, 'SAMPLE_GROUPS': ['Car:20', 'Pedestrian:15', 'Bike:15'], 'NUM_POINT_FEATURES': 3, 'DATABASE_WITH_FAKELIDAR': False, 'REMOVE_EXTRA_WIDTH': [0.2, 0.2, 0.2], 'LIMIT_WHOLE_SCENE': True}, {'NAME': 'random_world_flip', 'ALONG_AXIS_LIST': ['x', 'y']}, {'NAME': 'random_world_rotation', 'WORLD_ROT_ANGLE': [-0.78539816, 0.78539816]}, {'NAME': 'random_world_scaling', 'WORLD_SCALE_RANGE': [0.99, 1.01]}]
+2024-08-23 16:55:38,040   INFO  ----------- POINT_FEATURE_ENCODING -----------
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.encoding_type: absolute_coordinates_encoding
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.used_feature_list: ['x', 'y', 'z']
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.src_feature_list: ['x', 'y', 'z']
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG.DATA_PROCESSOR: [{'NAME': 'mask_points_and_boxes_outside_range', 'REMOVE_OUTSIDE_BOXES': True, 'REMOVE_OUTSIDE_FOV': True, 'MIN_POINTS_OF_GT': 5}, {'NAME': 'shuffle_points', 'SHUFFLE_ENABLED': {'train': True, 'test': False}}, {'NAME': 'transform_points_to_voxels', 'VOXEL_SIZE': [0.1, 0.1, 0.15], 'MAX_POINTS_PER_VOXEL': 5, 'MAX_NUMBER_OF_VOXELS': {'train': 80000, 'test': 90000}}]
+2024-08-23 16:55:38,040   INFO  cfg.DATA_CONFIG._BASE_CONFIG_: /space/userfiles/khatouna/OpenPCdet_FS_DA/tools/cfgs/dataset_configs/fourseason_dataset.yaml
+2024-08-23 16:55:38,040   INFO  ----------- MODEL -----------
+2024-08-23 16:55:38,040   INFO  cfg.MODEL.NAME: PVRCNNPlusPlus
+2024-08-23 16:55:38,040   INFO  ----------- VFE -----------
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.VFE.NAME: MeanVFE
+2024-08-23 16:55:38,041   INFO  ----------- BACKBONE_3D -----------
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.BACKBONE_3D.NAME: VoxelBackBone8x
+2024-08-23 16:55:38,041   INFO  ----------- MAP_TO_BEV -----------
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.MAP_TO_BEV.NAME: HeightCompression
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.MAP_TO_BEV.NUM_BEV_FEATURES: 256
+2024-08-23 16:55:38,041   INFO  ----------- BACKBONE_2D -----------
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.BACKBONE_2D.NAME: BaseBEVBackbone
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.BACKBONE_2D.LAYER_NUMS: [5, 5]
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.BACKBONE_2D.LAYER_STRIDES: [1, 2]
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.BACKBONE_2D.NUM_FILTERS: [128, 256]
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.BACKBONE_2D.UPSAMPLE_STRIDES: [1, 2]
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.BACKBONE_2D.NUM_UPSAMPLE_FILTERS: [256, 256]
+2024-08-23 16:55:38,041   INFO  ----------- DENSE_HEAD -----------
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.DENSE_HEAD.NAME: CenterHead
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.DENSE_HEAD.CLASS_AGNOSTIC: False
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.DENSE_HEAD.CLASS_NAMES_EACH_HEAD: [['Car', 'Pedestrian', 'Bike']]
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.DENSE_HEAD.SHARED_CONV_CHANNEL: 64
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.DENSE_HEAD.USE_BIAS_BEFORE_NORM: True
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.DENSE_HEAD.NUM_HM_CONV: 2
+2024-08-23 16:55:38,041   INFO  ----------- SEPARATE_HEAD_CFG -----------
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_ORDER: ['center', 'center_z', 'dim', 'rot']
+2024-08-23 16:55:38,041   INFO  ----------- HEAD_DICT -----------
+2024-08-23 16:55:38,041   INFO  ----------- center -----------
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_DICT.center.out_channels: 2
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_DICT.center.num_conv: 2
+2024-08-23 16:55:38,041   INFO  ----------- center_z -----------
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_DICT.center_z.out_channels: 1
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_DICT.center_z.num_conv: 2
+2024-08-23 16:55:38,041   INFO  ----------- dim -----------
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_DICT.dim.out_channels: 3
+2024-08-23 16:55:38,041   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_DICT.dim.num_conv: 2
+2024-08-23 16:55:38,042   INFO  ----------- rot -----------
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_DICT.rot.out_channels: 2
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.DENSE_HEAD.SEPARATE_HEAD_CFG.HEAD_DICT.rot.num_conv: 2
+2024-08-23 16:55:38,042   INFO  ----------- TARGET_ASSIGNER_CONFIG -----------
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.FEATURE_MAP_STRIDE: 8
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.NUM_MAX_OBJS: 500
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.GAUSSIAN_OVERLAP: 0.1
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.MIN_RADIUS: 2
+2024-08-23 16:55:38,042   INFO  ----------- LOSS_CONFIG -----------
+2024-08-23 16:55:38,042   INFO  ----------- LOSS_WEIGHTS -----------
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.cls_weight: 1.0
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.loc_weight: 2.0
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.code_weights: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+2024-08-23 16:55:38,042   INFO  ----------- POST_PROCESSING -----------
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.DENSE_HEAD.POST_PROCESSING.SCORE_THRESH: 0.1
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.DENSE_HEAD.POST_PROCESSING.POST_CENTER_LIMIT_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.DENSE_HEAD.POST_PROCESSING.MAX_OBJ_PER_SAMPLE: 500
+2024-08-23 16:55:38,042   INFO  ----------- NMS_CONFIG -----------
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.DENSE_HEAD.POST_PROCESSING.NMS_CONFIG.NMS_TYPE: nms_gpu
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.DENSE_HEAD.POST_PROCESSING.NMS_CONFIG.NMS_THRESH: 0.7
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.DENSE_HEAD.POST_PROCESSING.NMS_CONFIG.NMS_PRE_MAXSIZE: 4096
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.DENSE_HEAD.POST_PROCESSING.NMS_CONFIG.NMS_POST_MAXSIZE: 500
+2024-08-23 16:55:38,042   INFO  ----------- PFE -----------
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.PFE.NAME: VoxelSetAbstraction
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.PFE.POINT_SOURCE: raw_points
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.PFE.NUM_KEYPOINTS: 4096
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.PFE.NUM_OUTPUT_FEATURES: 90
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.PFE.SAMPLE_METHOD: SPC
+2024-08-23 16:55:38,042   INFO  ----------- SPC_SAMPLING -----------
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.PFE.SPC_SAMPLING.NUM_SECTORS: 6
+2024-08-23 16:55:38,042   INFO  cfg.MODEL.PFE.SPC_SAMPLING.SAMPLE_RADIUS_WITH_ROI: 1.6
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.FEATURES_SOURCE: ['bev', 'x_conv3', 'x_conv4', 'raw_points']
+2024-08-23 16:55:38,043   INFO  ----------- SA_LAYER -----------
+2024-08-23 16:55:38,043   INFO  ----------- raw_points -----------
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.NAME: VectorPoolAggregationModuleMSG
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.NUM_GROUPS: 2
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.LOCAL_AGGREGATION_TYPE: local_interpolation
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.NUM_REDUCED_CHANNELS: 3
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.NUM_CHANNELS_OF_LOCAL_AGGREGATION: 32
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.MSG_POST_MLPS: [32]
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.FILTER_NEIGHBOR_WITH_ROI: True
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.RADIUS_OF_NEIGHBOR_WITH_ROI: 2.4
+2024-08-23 16:55:38,043   INFO  ----------- GROUP_CFG_0 -----------
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.GROUP_CFG_0.NUM_LOCAL_VOXEL: [2, 2, 2]
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.GROUP_CFG_0.MAX_NEIGHBOR_DISTANCE: 0.2
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.GROUP_CFG_0.NEIGHBOR_NSAMPLE: -1
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.GROUP_CFG_0.POST_MLPS: [32, 32]
+2024-08-23 16:55:38,043   INFO  ----------- GROUP_CFG_1 -----------
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.GROUP_CFG_1.NUM_LOCAL_VOXEL: [3, 3, 3]
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.GROUP_CFG_1.MAX_NEIGHBOR_DISTANCE: 0.4
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.GROUP_CFG_1.NEIGHBOR_NSAMPLE: -1
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.raw_points.GROUP_CFG_1.POST_MLPS: [32, 32]
+2024-08-23 16:55:38,043   INFO  ----------- x_conv3 -----------
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.DOWNSAMPLE_FACTOR: 4
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.INPUT_CHANNELS: 64
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.NAME: VectorPoolAggregationModuleMSG
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.NUM_GROUPS: 2
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.LOCAL_AGGREGATION_TYPE: local_interpolation
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.NUM_REDUCED_CHANNELS: 32
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.NUM_CHANNELS_OF_LOCAL_AGGREGATION: 32
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.MSG_POST_MLPS: [128]
+2024-08-23 16:55:38,043   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.FILTER_NEIGHBOR_WITH_ROI: True
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.RADIUS_OF_NEIGHBOR_WITH_ROI: 4.0
+2024-08-23 16:55:38,044   INFO  ----------- GROUP_CFG_0 -----------
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.GROUP_CFG_0.NUM_LOCAL_VOXEL: [3, 3, 3]
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.GROUP_CFG_0.MAX_NEIGHBOR_DISTANCE: 1.2
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.GROUP_CFG_0.NEIGHBOR_NSAMPLE: -1
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.GROUP_CFG_0.POST_MLPS: [64, 64]
+2024-08-23 16:55:38,044   INFO  ----------- GROUP_CFG_1 -----------
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.GROUP_CFG_1.NUM_LOCAL_VOXEL: [3, 3, 3]
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.GROUP_CFG_1.MAX_NEIGHBOR_DISTANCE: 2.4
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.GROUP_CFG_1.NEIGHBOR_NSAMPLE: -1
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv3.GROUP_CFG_1.POST_MLPS: [64, 64]
+2024-08-23 16:55:38,044   INFO  ----------- x_conv4 -----------
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.DOWNSAMPLE_FACTOR: 8
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.INPUT_CHANNELS: 64
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.NAME: VectorPoolAggregationModuleMSG
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.NUM_GROUPS: 2
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.LOCAL_AGGREGATION_TYPE: local_interpolation
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.NUM_REDUCED_CHANNELS: 32
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.NUM_CHANNELS_OF_LOCAL_AGGREGATION: 32
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.MSG_POST_MLPS: [128]
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.FILTER_NEIGHBOR_WITH_ROI: True
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.RADIUS_OF_NEIGHBOR_WITH_ROI: 6.4
+2024-08-23 16:55:38,044   INFO  ----------- GROUP_CFG_0 -----------
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.GROUP_CFG_0.NUM_LOCAL_VOXEL: [3, 3, 3]
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.GROUP_CFG_0.MAX_NEIGHBOR_DISTANCE: 2.4
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.GROUP_CFG_0.NEIGHBOR_NSAMPLE: -1
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.GROUP_CFG_0.POST_MLPS: [64, 64]
+2024-08-23 16:55:38,044   INFO  ----------- GROUP_CFG_1 -----------
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.GROUP_CFG_1.NUM_LOCAL_VOXEL: [3, 3, 3]
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.GROUP_CFG_1.MAX_NEIGHBOR_DISTANCE: 4.8
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.GROUP_CFG_1.NEIGHBOR_NSAMPLE: -1
+2024-08-23 16:55:38,044   INFO  cfg.MODEL.PFE.SA_LAYER.x_conv4.GROUP_CFG_1.POST_MLPS: [64, 64]
+2024-08-23 16:55:38,044   INFO  ----------- POINT_HEAD -----------
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.POINT_HEAD.NAME: PointHeadSimple
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.POINT_HEAD.CLS_FC: [256, 256]
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.POINT_HEAD.CLASS_AGNOSTIC: True
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.POINT_HEAD.USE_POINT_FEATURES_BEFORE_FUSION: True
+2024-08-23 16:55:38,045   INFO  ----------- TARGET_CONFIG -----------
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.POINT_HEAD.TARGET_CONFIG.GT_EXTRA_WIDTH: [0.2, 0.2, 0.2]
+2024-08-23 16:55:38,045   INFO  ----------- LOSS_CONFIG -----------
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_REG: smooth-l1
+2024-08-23 16:55:38,045   INFO  ----------- LOSS_WEIGHTS -----------
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.point_cls_weight: 1.0
+2024-08-23 16:55:38,045   INFO  ----------- ROI_HEAD -----------
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.NAME: PVRCNNHeadBaseline
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.CLASS_AGNOSTIC: True
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.SHARED_FC: [256, 256]
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.CLS_FC: [256, 256]
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.REG_FC: [256, 256]
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.DP_RATIO: 0.3
+2024-08-23 16:55:38,045   INFO  ----------- NMS_CONFIG -----------
+2024-08-23 16:55:38,045   INFO  ----------- TRAIN -----------
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_TYPE: nms_gpu
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.MULTI_CLASSES_NMS: False
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_PRE_MAXSIZE: 9000
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_POST_MAXSIZE: 512
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_THRESH: 0.8
+2024-08-23 16:55:38,045   INFO  ----------- TEST -----------
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_TYPE: nms_gpu
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.MULTI_CLASSES_NMS: False
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_PRE_MAXSIZE: 1024
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_POST_MAXSIZE: 100
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_THRESH: 0.7
+2024-08-23 16:55:38,045   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.SCORE_THRESH: 0.1
+2024-08-23 16:55:38,045   INFO  ----------- ROI_GRID_POOL -----------
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GRID_SIZE: 6
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.NAME: VectorPoolAggregationModuleMSG
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.NUM_GROUPS: 2
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.LOCAL_AGGREGATION_TYPE: voxel_random_choice
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.NUM_REDUCED_CHANNELS: 30
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.NUM_CHANNELS_OF_LOCAL_AGGREGATION: 32
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.MSG_POST_MLPS: [128]
+2024-08-23 16:55:38,046   INFO  ----------- GROUP_CFG_0 -----------
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GROUP_CFG_0.NUM_LOCAL_VOXEL: [3, 3, 3]
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GROUP_CFG_0.MAX_NEIGHBOR_DISTANCE: 0.8
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GROUP_CFG_0.NEIGHBOR_NSAMPLE: 32
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GROUP_CFG_0.POST_MLPS: [64, 64]
+2024-08-23 16:55:38,046   INFO  ----------- GROUP_CFG_1 -----------
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GROUP_CFG_1.NUM_LOCAL_VOXEL: [3, 3, 3]
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GROUP_CFG_1.MAX_NEIGHBOR_DISTANCE: 1.6
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GROUP_CFG_1.NEIGHBOR_NSAMPLE: 32
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GROUP_CFG_1.POST_MLPS: [64, 64]
+2024-08-23 16:55:38,046   INFO  ----------- TARGET_CONFIG -----------
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.BOX_CODER: ResidualCoder
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.ROI_PER_IMAGE: 128
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.FG_RATIO: 0.5
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.SAMPLE_ROI_BY_EACH_CLASS: True
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_SCORE_TYPE: roi_iou
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_FG_THRESH: 0.75
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_BG_THRESH: 0.25
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_BG_THRESH_LO: 0.1
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.HARD_BG_RATIO: 0.8
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.REG_FG_THRESH: 0.55
+2024-08-23 16:55:38,046   INFO  ----------- LOSS_CONFIG -----------
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.CLS_LOSS: BinaryCrossEntropy
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.REG_LOSS: smooth-l1
+2024-08-23 16:55:38,046   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.CORNER_LOSS_REGULARIZATION: True
+2024-08-23 16:55:38,047   INFO  ----------- LOSS_WEIGHTS -----------
+2024-08-23 16:55:38,047   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_cls_weight: 1.0
+2024-08-23 16:55:38,047   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_reg_weight: 1.0
+2024-08-23 16:55:38,047   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_corner_weight: 1.0
+2024-08-23 16:55:38,047   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.code_weights: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+2024-08-23 16:55:38,047   INFO  ----------- POST_PROCESSING -----------
+2024-08-23 16:55:38,047   INFO  cfg.MODEL.POST_PROCESSING.RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
+2024-08-23 16:55:38,047   INFO  cfg.MODEL.POST_PROCESSING.SCORE_THRESH: 0.2
+2024-08-23 16:55:38,047   INFO  cfg.MODEL.POST_PROCESSING.OUTPUT_RAW_SCORE: False
+2024-08-23 16:55:38,047   INFO  cfg.MODEL.POST_PROCESSING.EVAL_METRIC: kitti
+2024-08-23 16:55:38,047   INFO  ----------- NMS_CONFIG -----------
+2024-08-23 16:55:38,047   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.MULTI_CLASSES_NMS: False
+2024-08-23 16:55:38,047   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_TYPE: nms_gpu
+2024-08-23 16:55:38,047   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_THRESH: 0.1
+2024-08-23 16:55:38,047   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_PRE_MAXSIZE: 4096
+2024-08-23 16:55:38,047   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_POST_MAXSIZE: 500
+2024-08-23 16:55:38,047   INFO  ----------- OPTIMIZATION -----------
+2024-08-23 16:55:38,047   INFO  cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU: 6
+2024-08-23 16:55:38,047   INFO  cfg.OPTIMIZATION.NUM_EPOCHS: 80
+2024-08-23 16:55:38,047   INFO  cfg.OPTIMIZATION.OPTIMIZER: adam_onecycle
+2024-08-23 16:55:38,047   INFO  cfg.OPTIMIZATION.LR: 0.01
+2024-08-23 16:55:38,047   INFO  cfg.OPTIMIZATION.WEIGHT_DECAY: 0.001
+2024-08-23 16:55:38,047   INFO  cfg.OPTIMIZATION.MOMENTUM: 0.9
+2024-08-23 16:55:38,047   INFO  cfg.OPTIMIZATION.MOMS: [0.95, 0.85]
+2024-08-23 16:55:38,047   INFO  cfg.OPTIMIZATION.PCT_START: 0.4
+2024-08-23 16:55:38,047   INFO  cfg.OPTIMIZATION.DIV_FACTOR: 10
+2024-08-23 16:55:38,047   INFO  cfg.OPTIMIZATION.DECAY_STEP_LIST: [35, 45]
+2024-08-23 16:55:38,047   INFO  cfg.OPTIMIZATION.LR_DECAY: 0.1
+2024-08-23 16:55:38,047   INFO  cfg.OPTIMIZATION.LR_CLIP: 1e-07
+2024-08-23 16:55:38,047   INFO  cfg.OPTIMIZATION.LR_WARMUP: False
+2024-08-23 16:55:38,047   INFO  cfg.OPTIMIZATION.WARMUP_EPOCH: 1
+2024-08-23 16:55:38,048   INFO  cfg.OPTIMIZATION.GRAD_NORM_CLIP: 10
+2024-08-23 16:55:38,048   INFO  cfg.TAG: pv_rcnn_plusplus
+2024-08-23 16:55:38,048   INFO  cfg.EXP_GROUP_PATH: 
+2024-08-23 16:55:38,066   INFO  ----------- Create dataloader & network & optimizer -----------
+2024-08-23 16:55:38,107   INFO  Database filter by min points Car: 7724 => 7037
+2024-08-23 16:55:38,109   INFO  Database filter by min points Pedestrian: 2067 => 1841
+2024-08-23 16:55:38,110   INFO  Database filter by min points Bike: 601 => 504
+2024-08-23 16:55:38,140   INFO  Database filter by min points Car: 7724 => 7037
+2024-08-23 16:55:38,142   INFO  Database filter by min points Pedestrian: 2067 => 1841
+2024-08-23 16:55:38,143   INFO  Database filter by min points Bike: 601 => 504
+2024-08-23 16:55:38,145   INFO  Loading Fourseason dataset
+2024-08-23 16:55:38,326   INFO  Total samples for Fourseason dataset: 2167
+2024-08-23 16:55:38,326   INFO  Loading Fourseason dataset
+2024-08-23 16:55:38,334   INFO  Total samples for Fourseason dataset: 2167
+2024-08-23 16:55:38,810   INFO  ==> Loading parameters from checkpoint /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model.pth to CPU
+2024-08-23 16:55:38,916   INFO  ==> Loading optimizer parameters from checkpoint /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model.pth to CPU
+2024-08-23 16:55:38,934   INFO  ==> Done
+2024-08-23 16:55:39,157   INFO  ----------- Model PVRCNNPlusPlus created, param count: 14114936 -----------
+2024-08-23 16:55:39,157   INFO  DistributedDataParallel(
+  (module): PVRCNNPlusPlus(
+    (vfe): MeanVFE()
+    (backbone_3d): VoxelBackBone8x(
+      (conv_input): SparseSequential(
+        (0): SubMConv3d(3, 16, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (1): BatchNorm1d(16, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+      (conv1): SparseSequential(
+        (0): SparseSequential(
+          (0): SubMConv3d(16, 16, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(16, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (conv2): SparseSequential(
+        (0): SparseSequential(
+          (0): SparseConv3d(16, 32, kernel_size=[3, 3, 3], stride=[2, 2, 2], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (1): SparseSequential(
+          (0): SubMConv3d(32, 32, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (2): SparseSequential(
+          (0): SubMConv3d(32, 32, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (conv3): SparseSequential(
+        (0): SparseSequential(
+          (0): SparseConv3d(32, 64, kernel_size=[3, 3, 3], stride=[2, 2, 2], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (1): SparseSequential(
+          (0): SubMConv3d(64, 64, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (2): SparseSequential(
+          (0): SubMConv3d(64, 64, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (conv4): SparseSequential(
+        (0): SparseSequential(
+          (0): SparseConv3d(64, 64, kernel_size=[3, 3, 3], stride=[2, 2, 2], padding=[0, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (1): SparseSequential(
+          (0): SubMConv3d(64, 64, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (2): SparseSequential(
+          (0): SubMConv3d(64, 64, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+          (1): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (conv_out): SparseSequential(
+        (0): SparseConv3d(64, 128, kernel_size=[3, 1, 1], stride=[2, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (1): BatchNorm1d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+    )
+    (map_to_bev_module): HeightCompression()
+    (pfe): VoxelSetAbstraction(
+      (SA_layers): ModuleList(
+        (0): VectorPoolAggregationModuleMSG(
+          (layer_0): VectorPoolAggregationModule(
+            radius=1.2, local_voxels=([3, 3, 3], local_aggregation_type=local_interpolation, num_c_reduction=64->32, num_c_local_aggregation=32
+            (local_interpolate_module): VectorPoolLocalInterpolateModule()
+            (separate_local_aggregation_layer): Sequential(
+              (0): Conv1d(1107, 864, kernel_size=(1,), stride=(1,), groups=27, bias=False)
+              (1): BatchNorm1d(864, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (post_mlps): Sequential(
+              (0): Conv1d(864, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+              (3): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (4): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (5): ReLU()
+            )
+          )
+          (layer_1): VectorPoolAggregationModule(
+            radius=2.4, local_voxels=([3, 3, 3], local_aggregation_type=local_interpolation, num_c_reduction=64->32, num_c_local_aggregation=32
+            (local_interpolate_module): VectorPoolLocalInterpolateModule()
+            (separate_local_aggregation_layer): Sequential(
+              (0): Conv1d(1107, 864, kernel_size=(1,), stride=(1,), groups=27, bias=False)
+              (1): BatchNorm1d(864, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (post_mlps): Sequential(
+              (0): Conv1d(864, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+              (3): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (4): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (5): ReLU()
+            )
+          )
+          (msg_post_mlps): Sequential(
+            (0): Conv1d(131, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+        )
+        (1): VectorPoolAggregationModuleMSG(
+          (layer_0): VectorPoolAggregationModule(
+            radius=2.4, local_voxels=([3, 3, 3], local_aggregation_type=local_interpolation, num_c_reduction=64->32, num_c_local_aggregation=32
+            (local_interpolate_module): VectorPoolLocalInterpolateModule()
+            (separate_local_aggregation_layer): Sequential(
+              (0): Conv1d(1107, 864, kernel_size=(1,), stride=(1,), groups=27, bias=False)
+              (1): BatchNorm1d(864, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (post_mlps): Sequential(
+              (0): Conv1d(864, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+              (3): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (4): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (5): ReLU()
+            )
+          )
+          (layer_1): VectorPoolAggregationModule(
+            radius=4.8, local_voxels=([3, 3, 3], local_aggregation_type=local_interpolation, num_c_reduction=64->32, num_c_local_aggregation=32
+            (local_interpolate_module): VectorPoolLocalInterpolateModule()
+            (separate_local_aggregation_layer): Sequential(
+              (0): Conv1d(1107, 864, kernel_size=(1,), stride=(1,), groups=27, bias=False)
+              (1): BatchNorm1d(864, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (post_mlps): Sequential(
+              (0): Conv1d(864, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+              (3): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (4): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (5): ReLU()
+            )
+          )
+          (msg_post_mlps): Sequential(
+            (0): Conv1d(131, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+        )
+      )
+      (SA_rawpoints): VectorPoolAggregationModuleMSG(
+        (layer_0): VectorPoolAggregationModule(
+          radius=0.2, local_voxels=([2, 2, 2], local_aggregation_type=local_interpolation, num_c_reduction=0->3, num_c_local_aggregation=32
+          (local_interpolate_module): VectorPoolLocalInterpolateModule()
+          (separate_local_aggregation_layer): Sequential(
+            (0): Conv1d(96, 256, kernel_size=(1,), stride=(1,), groups=8, bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+          (post_mlps): Sequential(
+            (0): Conv1d(256, 32, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv1d(32, 32, kernel_size=(1,), stride=(1,), bias=False)
+            (4): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+          )
+        )
+        (layer_1): VectorPoolAggregationModule(
+          radius=0.4, local_voxels=([3, 3, 3], local_aggregation_type=local_interpolation, num_c_reduction=0->3, num_c_local_aggregation=32
+          (local_interpolate_module): VectorPoolLocalInterpolateModule()
+          (separate_local_aggregation_layer): Sequential(
+            (0): Conv1d(324, 864, kernel_size=(1,), stride=(1,), groups=27, bias=False)
+            (1): BatchNorm1d(864, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+          (post_mlps): Sequential(
+            (0): Conv1d(864, 32, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv1d(32, 32, kernel_size=(1,), stride=(1,), bias=False)
+            (4): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+          )
+        )
+        (msg_post_mlps): Sequential(
+          (0): Conv1d(67, 32, kernel_size=(1,), stride=(1,), bias=False)
+          (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (vsa_point_feature_fusion): Sequential(
+        (0): Linear(in_features=544, out_features=90, bias=False)
+        (1): BatchNorm1d(90, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+    )
+    (backbone_2d): BaseBEVBackbone(
+      (blocks): ModuleList(
+        (0): Sequential(
+          (0): ZeroPad2d((1, 1, 1, 1))
+          (1): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), bias=False)
+          (2): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (3): ReLU()
+          (4): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (5): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (6): ReLU()
+          (7): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (8): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (9): ReLU()
+          (10): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (11): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (12): ReLU()
+          (13): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (14): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (15): ReLU()
+          (16): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (17): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (18): ReLU()
+        )
+        (1): Sequential(
+          (0): ZeroPad2d((1, 1, 1, 1))
+          (1): Conv2d(128, 256, kernel_size=(3, 3), stride=(2, 2), bias=False)
+          (2): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (3): ReLU()
+          (4): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (5): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (6): ReLU()
+          (7): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (8): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (9): ReLU()
+          (10): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (11): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (12): ReLU()
+          (13): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (14): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (15): ReLU()
+          (16): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (17): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (18): ReLU()
+        )
+      )
+      (deblocks): ModuleList(
+        (0): Sequential(
+          (0): ConvTranspose2d(128, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (1): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (1): Sequential(
+          (0): ConvTranspose2d(256, 256, kernel_size=(2, 2), stride=(2, 2), bias=False)
+          (1): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+    )
+    (dense_head): CenterHead(
+      (shared_conv): Sequential(
+        (0): Conv2d(512, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+      (heads_list): ModuleList(
+        (0): SeparateHead(
+          (center): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 2, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (center_z): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 1, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (dim): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (rot): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 2, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (hm): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+        )
+      )
+      (hm_loss_func): FocalLossCenterNet()
+      (reg_loss_func): RegLossCenterNet()
+    )
+    (point_head): PointHeadSimple(
+      (cls_loss_func): SigmoidFocalClassificationLoss()
+      (cls_layers): Sequential(
+        (0): Linear(in_features=544, out_features=256, bias=False)
+        (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+        (3): Linear(in_features=256, out_features=256, bias=False)
+        (4): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (5): ReLU()
+        (6): Linear(in_features=256, out_features=1, bias=True)
+      )
+    )
+    (roi_head): PVRCNNHeadBaseline(
+      (proposal_target_layer): ProposalTargetLayer()
+      (reg_loss_func): WeightedSmoothL1Loss()
+      (roi_grid_pool_layer): VectorPoolAggregationModuleMSG(
+        (layer_0): VectorPoolAggregationModule(
+          radius=0.8, local_voxels=([3, 3, 3], local_aggregation_type=voxel_random_choice, num_c_reduction=90->30, num_c_local_aggregation=32
+          (separate_local_aggregation_layer): Sequential(
+            (0): Conv1d(891, 864, kernel_size=(1,), stride=(1,), groups=27, bias=False)
+            (1): BatchNorm1d(864, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+          (post_mlps): Sequential(
+            (0): Conv1d(864, 64, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+            (4): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+          )
+        )
+        (layer_1): VectorPoolAggregationModule(
+          radius=1.6, local_voxels=([3, 3, 3], local_aggregation_type=voxel_random_choice, num_c_reduction=90->30, num_c_local_aggregation=32
+          (separate_local_aggregation_layer): Sequential(
+            (0): Conv1d(891, 864, kernel_size=(1,), stride=(1,), groups=27, bias=False)
+            (1): BatchNorm1d(864, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+          (post_mlps): Sequential(
+            (0): Conv1d(864, 64, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+            (4): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+          )
+        )
+        (msg_post_mlps): Sequential(
+          (0): Conv1d(131, 128, kernel_size=(1,), stride=(1,), bias=False)
+          (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (shared_fc_layer): Sequential(
+        (0): Conv1d(27648, 256, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+        (3): Dropout(p=0.3, inplace=False)
+        (4): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+        (5): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (6): ReLU()
+      )
+      (cls_layers): Sequential(
+        (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+        (3): Dropout(p=0.3, inplace=False)
+        (4): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+        (5): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (6): ReLU()
+        (7): Conv1d(256, 1, kernel_size=(1,), stride=(1,))
+      )
+      (reg_layers): Sequential(
+        (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+        (3): Dropout(p=0.3, inplace=False)
+        (4): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+        (5): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (6): ReLU()
+        (7): Conv1d(256, 7, kernel_size=(1,), stride=(1,))
+      )
+    )
+  )
+)
+2024-08-23 16:55:39,164   INFO  **********************Start training /pv_rcnn_plusplus(default)**********************
+2024-08-23 16:56:37,462   INFO  Train:   61/80 ( 76%) [ 277/362 ( 77%)]  Loss: 3.397 (3.40)  LR: 3.466e-03  Time cost: 00:18/25:51 [00:58/35:17:59]  Acc_iter 21998       Data time: 0.47(0.47)  Forward time: 17.78(17.78)  Batch time: 18.25(18.25)
+2024-08-23 16:56:46,616   INFO  Train:   61/80 ( 76%) [ 279/362 ( 77%)]  Loss: 3.291 (3.35)  LR: 3.464e-03  Time cost: 00:27/12:38 [01:07/17:39:47]  Acc_iter 22000       Data time: 0.12(0.20)  Forward time: 4.54(8.90)  Batch time: 4.67(9.09)
+2024-08-23 17:00:32,380   INFO  Train:   61/80 ( 76%) [ 329/362 ( 91%)]  Loss: 3.426 (3.33)  LR: 3.421e-03  Time cost: 04:13/02:37 [04:53/9:10:12]  Acc_iter 22050       Data time: 0.12(0.13)  Forward time: 4.37(4.65)  Batch time: 4.49(4.77)
+2024-08-23 17:00:32,442   INFO  
+2024-08-23 17:01:21,417   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-08-23 17:02:51,048   INFO  Train:   61/80 ( 76%) [ 361/362 (100%)]  Loss: 3.332 (3.33)  LR: 3.394e-03  Time cost: 06:31/00:04 [07:11/8:48:31]  Acc_iter 22082       Data time: 0.13(0.13)  Forward time: 4.08(4.47)  Batch time: 4.21(4.61)
+2024-08-23 17:03:18,276   INFO  Train:   62/80 ( 78%) [   0/362 (  0%)]  Loss: 3.461 (3.46)  LR: 3.393e-03  Time cost: 00:05/30:12 [07:39/9:34:00]  Acc_iter 22083       Data time: 0.45(0.45)  Forward time: 4.43(4.43)  Batch time: 4.89(4.89)
+2024-08-23 17:04:35,420   INFO  Train:   62/80 ( 78%) [  17/362 (  5%)]  Loss: 3.655 (3.36)  LR: 3.378e-03  Time cost: 01:22/26:14 [08:56/8:41:53]  Acc_iter 22100       Data time: 0.12(0.14)  Forward time: 4.39(4.42)  Batch time: 4.52(4.56)
+2024-08-23 17:08:10,400   INFO  Train:   62/80 ( 78%) [  67/362 ( 19%)]  Loss: 3.323 (3.32)  LR: 3.336e-03  Time cost: 04:57/21:29 [12:31/8:16:01]  Acc_iter 22150       Data time: 0.12(0.13)  Forward time: 4.18(4.24)  Batch time: 4.30(4.37)
+2024-08-23 17:08:15,143   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-08-23 17:11:42,696   INFO  Train:   62/80 ( 78%) [ 117/362 ( 32%)]  Loss: 3.438 (3.34)  LR: 3.293e-03  Time cost: 08:29/17:37 [16:03/8:06:28]  Acc_iter 22200       Data time: 0.12(0.13)  Forward time: 4.21(4.18)  Batch time: 4.34(4.32)
+2024-08-23 17:11:42,762   INFO  
+2024-08-23 17:13:17,829   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-08-23 17:15:23,548   INFO  Train:   62/80 ( 78%) [ 167/362 ( 46%)]  Loss: 3.368 (3.33)  LR: 3.251e-03  Time cost: 12:10/14:07 [19:44/8:06:12]  Acc_iter 22250       Data time: 0.13(0.13)  Forward time: 4.36(4.21)  Batch time: 4.48(4.35)
+2024-08-23 17:18:15,466   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-08-23 17:19:39,588   INFO  Train:   62/80 ( 78%) [ 217/362 ( 60%)]  Loss: 3.375 (3.33)  LR: 3.208e-03  Time cost: 16:26/10:56 [24:00/8:22:17]  Acc_iter 22300       Data time: 0.12(0.13)  Forward time: 5.48(4.39)  Batch time: 5.60(4.52)
+2024-08-23 17:23:15,659   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-08-23 17:24:15,818   INFO  Train:   62/80 ( 78%) [ 267/362 ( 74%)]  Loss: 3.212 (3.33)  LR: 3.166e-03  Time cost: 21:02/07:27 [28:36/8:39:04]  Acc_iter 22350       Data time: 0.12(0.13)  Forward time: 5.27(4.58)  Batch time: 5.39(4.71)
+2024-08-23 17:24:15,891   INFO  
+2024-08-23 17:28:18,005   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-08-23 17:28:52,212   INFO  Train:   62/80 ( 78%) [ 317/362 ( 88%)]  Loss: 3.381 (3.33)  LR: 3.124e-03  Time cost: 25:38/03:37 [33:13/8:49:11]  Acc_iter 22400       Data time: 0.13(0.13)  Forward time: 5.58(4.71)  Batch time: 5.70(4.84)
+2024-08-23 17:33:18,002   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-08-23 17:33:23,096   INFO  Train:   62/80 ( 78%) [ 361/362 (100%)]  Loss: 3.199 (3.33)  LR: 3.087e-03  Time cost: 30:09/00:04 [37:43/9:03:01]  Acc_iter 22444       Data time: 0.69(0.13)  Forward time: 5.09(4.87)  Batch time: 5.78(5.00)
+2024-08-23 17:34:02,085   INFO  Train:   63/80 ( 79%) [   0/362 (  0%)]  Loss: 2.951 (2.95)  LR: 3.087e-03  Time cost: 00:07/45:44 [38:22/13:43:29]  Acc_iter 22445       Data time: 0.57(0.57)  Forward time: 6.91(6.91)  Batch time: 7.49(7.49)
+2024-08-23 17:34:35,697   INFO  Train:   63/80 ( 79%) [   5/362 (  1%)]  Loss: 3.264 (3.22)  LR: 3.082e-03  Time cost: 00:41/40:51 [38:56/12:25:03]  Acc_iter 22450       Data time: 0.11(0.18)  Forward time: 6.62(6.67)  Batch time: 6.73(6.85)
+2024-08-23 17:38:59,970   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model
+2024-08-23 17:40:14,080   INFO  Train:   63/80 ( 79%) [  55/362 ( 15%)]  Loss: 3.570 (3.32)  LR: 3.041e-03  Time cost: 06:19/34:40 [44:34/12:09:53]  Acc_iter 22500       Data time: 0.12(0.13)  Forward time: 5.61(6.65)  Batch time: 5.73(6.78)
+2024-08-23 17:40:14,189   INFO  
+2024-08-23 17:43:57,994   INFO  Save latest model to /space/userfiles/khatouna/OpenPCdet_FS_DA/output/pv_rcnn_plusplus/default/ckpt/latest_model

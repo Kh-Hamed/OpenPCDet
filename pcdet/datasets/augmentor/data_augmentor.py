@@ -69,6 +69,17 @@ class DataAugmentor(object):
                 data_dict['roi_boxes'].reshape(-1,dim), np.zeros([1,3]), return_flip=True, enable=enable
                 )
                 data_dict['roi_boxes'] = roi_boxes.reshape(num_frame, num_rois,dim)
+        ################################################################################################33
+        points_T = data_dict['points_T']
+        if points_T is not None:
+            for cur_axis in config['ALONG_AXIS_LIST']:
+                assert cur_axis in ['x', 'y']
+                points_T, enable = getattr(augmentor_utils, 'random_flip_along_%s' % cur_axis)(gt_boxes = None,
+                    points = points_T, return_flip=True, DA = True
+                )
+                # data_dict['flip_%s_T'%cur_axis] = enable
+                data_dict['points_T'] = points_T
+        ###################################################################################################
 
         data_dict['gt_boxes'] = gt_boxes
         data_dict['points'] = points
@@ -92,6 +103,14 @@ class DataAugmentor(object):
         data_dict['gt_boxes'] = gt_boxes
         data_dict['points'] = points
         data_dict['noise_rot'] = noise_rot
+        ############################################ DA ################################
+        if data_dict['points_T'] is not None:
+            _, points_T, noise_rot_T = augmentor_utils.global_rotation(
+                None, data_dict['points_T'], rot_range=rot_range, return_rot=True, DA = True
+            )
+            data_dict['points_T'] = points_T
+            # data_dict['noise_rot_T'] = noise_rot_T
+        ###############################################################################
         return data_dict
 
     def random_world_scaling(self, data_dict=None, config=None):
@@ -111,6 +130,14 @@ class DataAugmentor(object):
         data_dict['gt_boxes'] = gt_boxes
         data_dict['points'] = points
         data_dict['noise_scale'] = noise_scale
+        #############################################################################################
+        if data_dict['points_T'] is not None:
+            _, points_T, noise_scale_T = augmentor_utils.global_scaling(
+                None, data_dict['points_T'], config['WORLD_SCALE_RANGE'], return_scale=True, DA = True
+            )
+            data_dict['points_T'] = points_T
+            # data_dict['noise_scale_t'] = noise_scale_T
+        ###########################################################################################
         return data_dict
 
     def random_image_flip(self, data_dict=None, config=None):

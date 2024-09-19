@@ -116,13 +116,16 @@ class DataBaseSampler(object):
             min_num = int(min_num)
             if min_num > 0 and name in db_infos.keys():
                 filtered_infos = []
+                gt = []
                 for info in db_infos[name]:
                     if info['num_points_in_gt'] >= min_num:
                         filtered_infos.append(info)
-
+                        gt.append(info['box3d_lidar'][3:6])
                 if self.logger is not None:
                     self.logger.info('Database filter by min points %s: %d => %d' %
                                      (name, len(db_infos[name]), len(filtered_infos)))
+                gt= np.array(gt)
+                mean_array = np.mean(gt, axis=0)
                 db_infos[name] = filtered_infos
 
         return db_infos
@@ -260,7 +263,7 @@ class DataBaseSampler(object):
         # copy crops from images
         img_path = self.root_path /  f'training/image_2/{info["image_idx"]}.png'
         raw_image = io.imread(img_path)
-        raw_image = raw_image.astype(np.float32)
+        raw_image = raw_image.astype(np.float64)
         raw_center = info['bbox'].reshape(2,2).mean(0)
         new_box = sampled_gt_boxes2d[idx].astype(np.int)
         new_shape = np.array([new_box[2]-new_box[0], new_box[3]-new_box[1]])
@@ -284,7 +287,7 @@ class DataBaseSampler(object):
                 sampled_boxes, data_dict['road_plane'], data_dict['calib']
             )
 
-        # sampled_boxes2d = np.stack([x['bbox'] for x in sampled_dict], axis=0).astype(np.float32)
+        # sampled_boxes2d = np.stack([x['bbox'] for x in sampled_dict], axis=0).astype(np.float64)
         boxes3d_camera = box_utils.boxes3d_lidar_to_kitti_camera(sampled_boxes, data_dict['calib'])
         sampled_boxes2d = box_utils.boxes3d_kitti_camera_to_imageboxes(boxes3d_camera, data_dict['calib'],
                                                                         data_dict['images'].shape[:2])
@@ -392,13 +395,31 @@ class DataBaseSampler(object):
             else:
                 file_path = self.root_path / info['path']
 
-                obj_points = np.fromfile(str(file_path), dtype=np.float32).reshape(
+                obj_points = np.fromfile(str(file_path), dtype=np.float64).reshape(
                     [-1, self.sampler_cfg.NUM_POINT_FEATURES])
                 if obj_points.shape[0] != info['num_points_in_gt']:
                     obj_points = np.fromfile(str(file_path), dtype=np.float64).reshape(-1, self.sampler_cfg.NUM_POINT_FEATURES)
 
             assert obj_points.shape[0] == info['num_points_in_gt']
-            obj_points[:, :3] += info['box3d_lidar'][:3].astype(np.float32)
+            if self.sampler_cfg.get('GROUND_HEIGHT', False):
+                z_ground = self.sampler_cfg.GROUND_HEIGHT
+                if gt_boxes.shape[0]:
+                    dis = gt_boxes[:,0:3]-info['box3d_lidar'][0:3]
+                    dis = np.sum(np.abs(dis), axis=1)
+                    idx_min = np.argmin(dis)
+
+                    dis_origin = np.sum(np.abs(info['box3d_lidar'][0:3]))
+                    if dis[idx_min] < dis_origin:
+                        z_ground = gt_boxes[idx_min,2]-gt_boxes[idx_min,5]/2.0
+                xyz = copy.deepcopy(info['box3d_lidar'][0:3])
+                lwh = copy.deepcopy(info['box3d_lidar'][3:6])
+                xyz[2] = z_ground+ lwh[2]/2.0
+                sampled_gt_boxes[idx,0:3] = xyz            
+                sampled_gt_boxes[idx,3:6] = lwh   
+                obj_points[:, :3] += xyz
+
+            else:
+                obj_points[:, :3] += info['box3d_lidar'][:3].astype(np.float64)
 
             if self.sampler_cfg.get('USE_ROAD_PLANE', False):
                 # mv height
@@ -430,7 +451,8 @@ class DataBaseSampler(object):
             sampled_gt_boxes[:, 0:7], extra_width=self.sampler_cfg.REMOVE_EXTRA_WIDTH
         )
         points = box_utils.remove_points_in_boxes3d(points, large_sampled_gt_boxes)
-        points = np.concatenate([obj_points[:, :points.shape[-1]], points], axis=0)
+        # points = np.concatenate([obj_points[:, :points.shape[-1]], points], axis=0)
+        points = np.concatenate([obj_points, points], axis=0)
         gt_names = np.concatenate([gt_names, sampled_gt_names], axis=0)
         gt_boxes = np.concatenate([gt_boxes, sampled_gt_boxes], axis=0)
         data_dict['gt_boxes'] = gt_boxes
@@ -465,7 +487,7 @@ class DataBaseSampler(object):
             if int(sample_group['sample_num']) > 0:
                 sampled_dict = self.sample_with_fixed_number(class_name, sample_group)
 
-                sampled_boxes = np.stack([x['box3d_lidar'] for x in sampled_dict], axis=0).astype(np.float32)
+                sampled_boxes = np.stack([x['box3d_lidar'] for x in sampled_dict], axis=0).astype(np.float64)
 
                 assert not self.sampler_cfg.get('DATABASE_WITH_FAKELIDAR', False), 'Please use latest codes to generate GT_DATABASE'
 

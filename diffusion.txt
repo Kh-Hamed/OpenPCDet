@@ -1,0 +1,1340 @@
+from dataclasses import dataclass
+from diffusers import UNet1DModel
+import torch
+from diffusers import DDIMScheduler
+from safetensors.torch import load_model
+import torch.nn as nn
+
+
+
+@dataclass
+class TrainingConfig:
+    image_size = 256  # the generated image resolution
+    train_batch_size = 64
+    eval_batch_size = 16  # how many images to sample during evaluation
+    num_epochs = 20
+    gradient_accumulation_steps = 1
+    learning_rate = 1e-4
+    lr_warmup_steps = 500
+    save_image_epochs = 10
+    save_model_epochs = 10
+    mixed_precision = "fp16"  # `no` for float32, `fp16` for automatic mixed precision
+    output_dir = "ddpm-hamed-256"  # the model name locally and on the HF Hub
+    hub_private_repo = False
+    overwrite_output_dir = True  # overwrite the old model when re-running the notebook
+    seed = 0
+
+config = TrainingConfig()
+
+
+
+model_diff = UNet1DModel(
+    in_channels=1,
+    out_channels=1,
+    extra_in_channels=16,
+    block_out_channels = (32, 32, 64, 64, 128, 128),
+    down_block_types=(
+    "DownBlock1DNoSkip",  # a regular ResNet downsampling block
+    "AttnDownBlock1D",
+    "AttnDownBlock1D",
+    "AttnDownBlock1D",
+    "AttnDownBlock1D",  # a ResNet downsampling block with spatial self-attention
+    "DownBlock1D",
+    ),
+    up_block_types=(
+        "UpBlock1D",  # a regular ResNet upsampling block
+        "AttnUpBlock1D",  # a ResNet upsampling block with spatial self-attention
+        "AttnUpBlock1D",
+        "AttnUpBlock1D",
+        "AttnUpBlock1D",
+        "UpBlock1DNoSkip",
+    )
+) 
+
+
+class FullyConnectedNN(nn.Module):
+    def __init__(self, input_channels=256, output_channels=1, fc_list=None, dp_ratio=0.3):
+        super(FullyConnectedNN, self).__init__()
+        if fc_list is None:
+            fc_list = [256, 256]
+
+        fc_layers = []
+        pre_channel = input_channels
+        
+        for k in range(len(fc_list)):
+            fc_layers.extend([
+                nn.Conv1d(pre_channel, fc_list[k], kernel_size=1, bias=False),
+                nn.BatchNorm1d(fc_list[k]),
+                nn.ReLU()
+            ])
+            pre_channel = fc_list[k]
+            
+            if dp_ratio >= 0 and k == 0:
+                fc_layers.append(nn.Dropout(dp_ratio))
+        
+        fc_layers.append(nn.Conv1d(pre_channel, output_channels, kernel_size=1, bias=True))
+        self.fc_layers = nn.Sequential(*fc_layers)
+
+    def forward(self, x):
+        return self.fc_layers(x)
+
+
+model_bc = FullyConnectedNN()
+model_bc.load_state_dict(torch.load('/space/userfiles/khatouna/OpenPCDet_FS/pcdet/model_Adv_clss_epoch_40.pth'))
+# model_bc.load_state_dict(torch.load('/space/userfiles/khatouna/OpenPCDet_FS/pcdet/model_Adv_clss_epoch_40.pth'), weights_only=True)
+model_bc = model_bc.to("cuda")
+
+
+optimizer = torch.optim.AdamW(model_diff.parameters(), lr=config.learning_rate)
+noise_scheduler = DDIMScheduler(num_train_timesteps=1000, beta_schedule = 'squaredcos_cap_v2', rescale_betas_zero_snr = True, timestep_spacing = "linspace" )
+noise_scheduler.set_timesteps(100)
+args = (config, model_diff, noise_scheduler, optimizer)
+safetensors_file = "/space/userfiles/khatouna/OpenPCDet_FS/ddpm-hamed-2561/unet/diffusion_pytorch_model.safetensors"
+load_model(model_diff, safetensors_file)
+model_diff = model_diff.to("cuda")
+
+
+def image_guided_generation(image_tensor):
+
+    if image_tensor.shape[0] == 0:
+        return [], []
+    
+    model_bc.eval()
+    # target_score = model_bc(image_tensor.permute(0, 2, 1).detach()).detach()
+    # mask_harsh_samples = (torch.sigmoid(target_score) >= 0.6).detach()
+    # image_tensor_harsh = image_tensor[mask_harsh_samples.view(-1, )]
+    # if image_tensor_harsh.shape[0] == 0:
+    #     return [], []
+
+
+    min_val = torch.zeros((image_tensor.shape[0], 1, 1), device=image_tensor.device)
+    max_val = torch.zeros((image_tensor.shape[0], 1, 1), device=image_tensor.device)
+    for i in range(image_tensor.shape[0]):
+        # mask = image_tensor[i, 0, :] !=0
+        min_val[i, 0, 0], _ = torch.min(image_tensor[i, 0, :], dim=0, keepdim=True)
+        max_val[i, 0, 0], _ = torch.max(image_tensor[i, 0, :], dim=0, keepdim=True)
+    
+    normalized_tensor = (image_tensor - min_val) / (max_val - min_val)
+    
+    # Scale to range [-1, 1]
+    normalized_image = normalized_tensor * 2 - 1
+
+
+    target_score = model_bc(normalized_image.permute(0, 2, 1).detach()).detach()
+    mask_harsh_samples = (torch.sigmoid(target_score) > 0.50).detach()
+    normalized_image_harsh = normalized_image[mask_harsh_samples.view(-1, )]
+    if normalized_image_harsh.shape[0] == 0:
+        return [], []
+
+    
+    # torch.manual_seed(42)
+    noise = torch.randn_like(normalized_image_harsh)    
+    reverse = 0.5
+    xt = noise_scheduler.add_noise(original_samples = normalized_image_harsh.clone().detach(), noise =noise,  timesteps=torch.tensor([noise_scheduler.timesteps[int(len(noise_scheduler.timesteps)* reverse)]]))
+    g_image =normalized_image_harsh.clamp(-1, 1).detach()
+    inference_timesteps = noise_scheduler.timesteps[int(-len(noise_scheduler.timesteps)*(1 - reverse)):]
+    model_diff.eval()
+    for t in inference_timesteps:
+        # t = (torch.ones(normalized_image.shape[0]) * t).long().to(normalized_image.device)
+        xt = xt.requires_grad_()
+
+        model_output = model_diff(xt, t).sample
+        iteration_step = noise_scheduler.step(
+            model_output, t, xt, eta=0
+        )
+        x_t_minus_one, pred_original = iteration_step.prev_sample, iteration_step.pred_original_sample
+        if g_image is not None and noise_scheduler.alphas_cumprod[t] !=0:
+            mask1 = (((g_image != -1).detach()) * 1.0).float()
+            mask2 = (((g_image == -1).detach()) * -1.0).float()
+            pred_orig = pred_original * mask1 +  mask2
+            difference = (g_image - pred_orig) 
+            norm = torch.linalg.norm(difference)
+            # norm_grad = torch.autograd.grad(outputs=norm, inputs=xt)[0] 
+
+            target_score = torch.sigmoid(model_bc(pred_orig.permute(0, 2, 1)))
+            alpha = 0.5
+            if torch.mean(target_score) >= 0.25:
+                alpha = 0.6
+
+            output = alpha * torch.sum(target_score) + (1.0 - alpha) * norm
+            norm_grad = torch.autograd.grad(outputs= output, inputs=xt)[0] 
+            # print(alpha)
+            # print(norm)
+            # print(torch.mean(target_score))
+            # print(output)
+            # print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+
+            x_t_minus_one = x_t_minus_one - 2.0 *  norm_grad
+        xt = x_t_minus_one
+        xt = xt.detach()
+
+    xt = xt.clamp(-1, 1)
+    # print("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+    # print("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+    # print("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+    # mask = g_image != -1
+    # bs = xt.shape[0]
+    # print(torch.sum(mask))
+    # difference = mask * (g_image - xt)
+    # norm = torch.linalg.norm(difference)
+    # norm1 = torch.sum(torch.abs(difference))/torch.sum(mask)
+    # norm2 = torch.sum(torch.abs(difference))/bs
+    return normalized_image_harsh, xt
+    
+
+
+
+###########################################################################################################################
+###########################################################################################################################
+###########################################################################################################################
+from dataclasses import dataclass
+from diffusers import UNet1DModel
+import torch
+from diffusers import DDIMScheduler
+from safetensors.torch import load_model
+import torch.nn as nn
+
+
+
+@dataclass
+class TrainingConfig:
+    image_size = 256  # the generated image resolution
+    train_batch_size = 64
+    eval_batch_size = 16  # how many images to sample during evaluation
+    num_epochs = 20
+    gradient_accumulation_steps = 1
+    learning_rate = 1e-4
+    lr_warmup_steps = 500
+    save_image_epochs = 10
+    save_model_epochs = 10
+    mixed_precision = "fp16"  # `no` for float32, `fp16` for automatic mixed precision
+    output_dir = "ddpm-hamed-256"  # the model name locally and on the HF Hub
+    hub_private_repo = False
+    overwrite_output_dir = True  # overwrite the old model when re-running the notebook
+    seed = 0
+
+config = TrainingConfig()
+
+
+
+model_diff = UNet1DModel(
+    in_channels=1,
+    out_channels=1,
+    extra_in_channels=16,
+    block_out_channels = (32, 32, 64, 64, 128, 128),
+    down_block_types=(
+    "DownBlock1DNoSkip",  # a regular ResNet downsampling block
+    "AttnDownBlock1D",
+    "AttnDownBlock1D",
+    "AttnDownBlock1D",
+    "AttnDownBlock1D",  # a ResNet downsampling block with spatial self-attention
+    "DownBlock1D",
+    ),
+    up_block_types=(
+        "UpBlock1D",  # a regular ResNet upsampling block
+        "AttnUpBlock1D",  # a ResNet upsampling block with spatial self-attention
+        "AttnUpBlock1D",
+        "AttnUpBlock1D",
+        "AttnUpBlock1D",
+        "UpBlock1DNoSkip",
+    )
+) 
+
+
+class FullyConnectedNN(nn.Module):
+    def __init__(self, input_channels=256, output_channels=1, fc_list=None, dp_ratio=0.3):
+        super(FullyConnectedNN, self).__init__()
+        if fc_list is None:
+            fc_list = [256, 256]
+
+        fc_layers = []
+        pre_channel = input_channels
+        
+        for k in range(len(fc_list)):
+            fc_layers.extend([
+                nn.Conv1d(pre_channel, fc_list[k], kernel_size=1, bias=False),
+                nn.BatchNorm1d(fc_list[k]),
+                nn.ReLU()
+            ])
+            pre_channel = fc_list[k]
+            
+            if dp_ratio >= 0 and k == 0:
+                fc_layers.append(nn.Dropout(dp_ratio))
+        
+        fc_layers.append(nn.Conv1d(pre_channel, output_channels, kernel_size=1, bias=True))
+        self.fc_layers = nn.Sequential(*fc_layers)
+
+    def forward(self, x):
+        return self.fc_layers(x)
+
+
+model_bc = FullyConnectedNN()
+model_bc.load_state_dict(torch.load('/space/userfiles/khatouna/OpenPCDet_FS/pcdet/model_Adv_clss_epoch_40.pth'))
+# model_bc.load_state_dict(torch.load('/space/userfiles/khatouna/OpenPCDet_FS/pcdet/model_Adv_clss_epoch_40.pth'), weights_only=True)
+model_bc = model_bc.to("cuda")
+
+
+optimizer = torch.optim.AdamW(model_diff.parameters(), lr=config.learning_rate)
+noise_scheduler = DDIMScheduler(num_train_timesteps=1000, beta_schedule = 'squaredcos_cap_v2', rescale_betas_zero_snr = True, timestep_spacing = "linspace" )
+noise_scheduler.set_timesteps(100)
+args = (config, model_diff, noise_scheduler, optimizer)
+safetensors_file = "/space/userfiles/khatouna/OpenPCDet_FS/ddpm-hamed-2561/unet/diffusion_pytorch_model.safetensors"
+load_model(model_diff, safetensors_file)
+model_diff = model_diff.to("cuda")
+
+
+def image_guided_generation(image_tensor):
+
+    if image_tensor.shape[0] == 0:
+        return [], []
+    
+    model_bc.eval()
+    # target_score = model_bc(image_tensor.permute(0, 2, 1).detach()).detach()
+    # mask_harsh_samples = (torch.sigmoid(target_score) >= 0.6).detach()
+    # image_tensor_harsh = image_tensor[mask_harsh_samples.view(-1, )]
+    # if image_tensor_harsh.shape[0] == 0:
+    #     return [], []
+
+
+    min_val = torch.zeros((image_tensor.shape[0], 1, 1), device=image_tensor.device)
+    max_val = torch.zeros((image_tensor.shape[0], 1, 1), device=image_tensor.device)
+    for i in range(image_tensor.shape[0]):
+        # mask = image_tensor[i, 0, :] !=0
+        min_val[i, 0, 0], _ = torch.min(image_tensor[i, 0, :], dim=0, keepdim=True)
+        max_val[i, 0, 0], _ = torch.max(image_tensor[i, 0, :], dim=0, keepdim=True)
+    
+    normalized_tensor = (image_tensor - min_val) / (max_val - min_val)
+    
+    # Scale to range [-1, 1]
+    normalized_image = normalized_tensor * 2 - 1
+
+
+    target_score = model_bc(normalized_image.permute(0, 2, 1).detach()).detach()
+    mask_harsh_samples = (torch.sigmoid(target_score) > 0.50).detach()
+    normalized_image_harsh = normalized_image[mask_harsh_samples.view(-1, )]
+    if normalized_image_harsh.shape[0] == 0:
+        return [], []
+
+    
+    torch.manual_seed(42)
+    noise = torch.randn_like(normalized_image_harsh)    
+    reverse = 0.5
+    xt = noise_scheduler.add_noise(original_samples = normalized_image_harsh.clone().detach(), noise =noise,  timesteps=torch.tensor([noise_scheduler.timesteps[int(len(noise_scheduler.timesteps)* reverse)]]))
+    g_image =normalized_image_harsh.clamp(-1, 1).detach()
+    inference_timesteps = noise_scheduler.timesteps[int(-len(noise_scheduler.timesteps)*(1 - reverse)):]
+    model_diff.eval()
+    for t in inference_timesteps:
+        # t = (torch.ones(normalized_image.shape[0]) * t).long().to(normalized_image.device)
+        xt = xt.requires_grad_()
+
+        model_output = model_diff(xt, t).sample
+        iteration_step = noise_scheduler.step(
+            model_output, t, xt, eta=0
+        )
+        x_t_minus_one, pred_original = iteration_step.prev_sample, iteration_step.pred_original_sample
+        if g_image is not None and noise_scheduler.alphas_cumprod[t] !=0:
+            mask1 = (((g_image != -1).detach()) * 1.0).float()
+            mask2 = (((g_image == -1).detach()) * -1.0).float()
+            pred_orig = pred_original * mask1 +  mask2
+            difference = (g_image - pred_orig) 
+            norm = torch.linalg.norm(difference)
+            # norm_grad = torch.autograd.grad(outputs=norm, inputs=xt)[0] 
+
+            target_score = torch.sigmoid(model_bc(pred_orig.permute(0, 2, 1)))
+            alpha = 0.5
+            if torch.mean(target_score) >=0.25:
+                alpha = 0.6
+
+            output = alpha * torch.sum(target_score) + (1.0 - alpha) * norm
+            norm_grad = torch.autograd.grad(outputs= output, inputs=xt)[0] 
+            # print(norm)
+            # print(torch.mean(target_score))
+            # print(output)
+            # print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+
+            x_t_minus_one = x_t_minus_one - 1.0 *  norm_grad
+        xt = x_t_minus_one
+        xt = xt.detach()
+
+    xt = xt.clamp(-1, 1)
+    # print("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+    # print("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+    # print("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+    # mask = g_image != -1
+    # bs = xt.shape[0]
+    # print(torch.sum(mask))
+    # difference = mask * (g_image - xt)
+    # norm = torch.linalg.norm(difference)
+    # norm1 = torch.sum(torch.abs(difference))/torch.sum(mask)
+    # norm2 = torch.sum(torch.abs(difference))/bs
+    return normalized_image_harsh, xt
+    
+    
+##############################################################################################
+##############################################################################################
+##############################################################################################
+##############################################################################################
+##############################################################################################
+##############################################################################################
+##############################################################################################
+##############################################################################################
+import torch.nn as nn
+import time
+
+from ...ops.pointnet2.pointnet2_stack import pointnet2_modules as pointnet2_stack_modules
+from ...utils import common_utils
+from .roi_head_template import RoIHeadTemplate
+######################################################################
+######################################################################
+from .diffusion import image_guided_generation
+from dataclasses import dataclass
+from diffusers import UNet1DModel
+import torch
+from diffusers import DDIMScheduler
+from safetensors.torch import load_model
+import torch.nn as nn
+import torch.nn.functional as F
+
+def focal_loss(pred, target, alpha=0.25, gamma=2.0, reduction='mean'):
+    """
+    Focal Loss for binary classification.
+    
+    Args:
+        pred (torch.Tensor): Predictions from the model (logits or probabilities).
+        target (torch.Tensor): Ground truth labels (0 or 1).
+        alpha (float): Weighting factor for the class.
+        gamma (float): Focusing parameter to adjust the rate at which easy examples are down-weighted.
+        reduction (str): 'mean' or 'sum'. Specifies the method to reduce the loss.
+
+    Returns:
+        torch.Tensor: Computed focal loss.
+    """
+    # Apply sigmoid to get probabilities if input is logits
+    pred = torch.sigmoid(pred)
+    
+    # Compute binary cross entropy
+    bce_loss = F.binary_cross_entropy(pred, target, reduction='none')
+    
+    # Compute the weights
+    pt = torch.where(target == 1, pred, 1 - pred)
+    focal_weight = alpha * (1 - pt) ** gamma
+    
+    # Apply weighting to the BCE loss
+    focal_loss = focal_weight * bce_loss
+    
+    if reduction == 'mean':
+        return focal_loss.mean()
+    elif reduction == 'sum':
+        return focal_loss.sum()
+    else:
+        return focal_loss
+
+@dataclass
+class TrainingConfig:
+    image_size = 256  # the generated image resolution
+    train_batch_size = 64
+    eval_batch_size = 16  # how many images to sample during evaluation
+    num_epochs = 20
+    gradient_accumulation_steps = 1
+    learning_rate = 1e-4
+    lr_warmup_steps = 500
+    save_image_epochs = 10
+    save_model_epochs = 10
+    mixed_precision = "fp16"  # `no` for float32, `fp16` for automatic mixed precision
+    output_dir = "ddpm-hamed-256"  # the model name locally and on the HF Hub
+    hub_private_repo = False
+    overwrite_output_dir = True  # overwrite the old model when re-running the notebook
+    seed = 0
+
+config = TrainingConfig()
+
+
+
+# Create three instances of the model
+model_diff_1 = UNet1DModel(
+    in_channels=1,
+    out_channels=1,
+    extra_in_channels=16,
+    block_out_channels = (32, 32, 64, 64, 128, 128),
+    down_block_types=(
+        "DownBlock1DNoSkip", 
+        "AttnDownBlock1D",
+        "AttnDownBlock1D",
+        "AttnDownBlock1D",
+        "AttnDownBlock1D", 
+        "DownBlock1D",
+    ),
+    up_block_types=(
+        "UpBlock1D",  
+        "AttnUpBlock1D",  
+        "AttnUpBlock1D",
+        "AttnUpBlock1D",
+        "AttnUpBlock1D",
+        "UpBlock1DNoSkip",
+    )
+)
+
+model_diff_2 = UNet1DModel(
+    in_channels=1,
+    out_channels=1,
+    extra_in_channels=16,
+    block_out_channels = (32, 32, 64, 64, 128, 128),
+    down_block_types=(
+        "DownBlock1DNoSkip", 
+        "AttnDownBlock1D",
+        "AttnDownBlock1D",
+        "AttnDownBlock1D",
+        "AttnDownBlock1D", 
+        "DownBlock1D",
+    ),
+    up_block_types=(
+        "UpBlock1D",  
+        "AttnUpBlock1D",  
+        "AttnUpBlock1D",
+        "AttnUpBlock1D",
+        "AttnUpBlock1D",
+        "UpBlock1DNoSkip",
+    )
+)
+
+model_diff_3 = UNet1DModel(
+    in_channels=1,
+    out_channels=1,
+    extra_in_channels=16,
+    block_out_channels = (32, 32, 64, 64, 128, 128),
+    down_block_types=(
+        "DownBlock1DNoSkip", 
+        "AttnDownBlock1D",
+        "AttnDownBlock1D",
+        "AttnDownBlock1D",
+        "AttnDownBlock1D", 
+        "DownBlock1D",
+    ),
+    up_block_types=(
+        "UpBlock1D",  
+        "AttnUpBlock1D",  
+        "AttnUpBlock1D",
+        "AttnUpBlock1D",
+        "AttnUpBlock1D",
+        "UpBlock1DNoSkip",
+    )
+)
+
+
+
+class FullyConnectedNN(nn.Module):
+    def __init__(self, input_channels=256, output_channels=1, fc_list=None, dp_ratio=0.3):
+        super(FullyConnectedNN, self).__init__()
+        if fc_list is None:
+            fc_list = [256, 256]
+
+        fc_layers = []
+        pre_channel = input_channels
+        
+        for k in range(len(fc_list)):
+            fc_layers.extend([
+                nn.Conv1d(pre_channel, fc_list[k], kernel_size=1, bias=False),
+                nn.BatchNorm1d(fc_list[k]),
+                nn.ReLU()
+            ])
+            pre_channel = fc_list[k]
+            
+            if dp_ratio >= 0 and k == 0:
+                fc_layers.append(nn.Dropout(dp_ratio))
+        
+        fc_layers.append(nn.Conv1d(pre_channel, output_channels, kernel_size=1, bias=True))
+        self.fc_layers = nn.Sequential(*fc_layers)
+
+    def forward(self, x):
+        return self.fc_layers(x)
+
+
+model_bc_Car = FullyConnectedNN()
+model_bc_Pedestrian = FullyConnectedNN()
+model_bc_Bike = FullyConnectedNN()
+model_bc_Car.load_state_dict(torch.load('/space/userfiles/khatouna/OpenPCDet_FS/pcdet/Car_model_Adv_clss_epoch_40.pth'))
+model_bc_Pedestrian.load_state_dict(torch.load('/space/userfiles/khatouna/OpenPCDet_FS/pcdet/Pedestrian_model_Adv_clss_epoch_40.pth'))
+model_bc_Bike.load_state_dict(torch.load('/space/userfiles/khatouna/OpenPCDet_FS/pcdet/Bike_model_Adv_clss_epoch_40.pth'))
+# model_bc.load_state_dict(torch.load('/space/userfiles/khatouna/OpenPCDet_FS/pcdet/model_Adv_clss_epoch_40.pth'), weights_only=True)
+model_bc_Car = model_bc_Car.to("cuda")
+model_bc_Pedestrian = model_bc_Pedestrian.to("cuda")
+model_bc_Bike = model_bc_Bike.to("cuda")
+
+
+# optimizer = torch.optim.AdamW(model_diff.parameters(), lr=config.learning_rate)
+noise_scheduler = DDIMScheduler(num_train_timesteps=1000, beta_schedule = 'squaredcos_cap_v2', rescale_betas_zero_snr = True, timestep_spacing = "linspace" )
+noise_scheduler.set_timesteps(100)
+# args = (config, model_diff, noise_scheduler, optimizer)
+# safetensors_file = "/space/userfiles/khatouna/OpenPCDet_FS/ddpm-hamed-2561/unet/diffusion_pytorch_model.safetensors"
+safetensors_file = "/space/userfiles/khatouna/OpenPCDet_FS/ddpm_da/Car/unet/diffusion_pytorch_model.safetensors"
+load_model(model_diff_1, safetensors_file)
+model_diff_Car = model_diff_1.to("cuda")
+
+
+safetensors_file = "/space/userfiles/khatouna/OpenPCDet_FS/ddpm_da/Pedestrian/unet/diffusion_pytorch_model.safetensors"
+load_model(model_diff_2, safetensors_file)
+model_diff_Pedestrian = model_diff_2.to("cuda")
+
+safetensors_file = "/space/userfiles/khatouna/OpenPCDet_FS/ddpm_da/Bike/unet/diffusion_pytorch_model.safetensors"
+load_model(model_diff_3, safetensors_file)
+model_diff_Bike= model_diff_3.to("cuda")
+
+model_diffs = [model_diff_Car, model_diff_Pedestrian, model_diff_Bike]
+model_bcs = [model_bc_Car, model_bc_Pedestrian, model_bc_Bike]
+
+
+####################################################################
+####################################################################
+
+
+class PVRCNNHeadBaseline(RoIHeadTemplate):
+    def __init__(self, input_channels, model_cfg, num_class=1, **kwargs):
+        super().__init__(num_class=num_class, model_cfg=model_cfg)
+        self.model_cfg = model_cfg
+
+        self.roi_grid_pool_layer, num_c_out = pointnet2_stack_modules.build_local_aggregation_module(
+            input_channels=input_channels, config=self.model_cfg.ROI_GRID_POOL
+        )
+
+        GRID_SIZE = self.model_cfg.ROI_GRID_POOL.GRID_SIZE
+        pre_channel = GRID_SIZE * GRID_SIZE * GRID_SIZE * num_c_out
+
+        shared_fc_list = []
+        for k in range(0, self.model_cfg.SHARED_FC.__len__()):
+            shared_fc_list.extend([
+                nn.Conv1d(pre_channel, self.model_cfg.SHARED_FC[k], kernel_size=1, bias=False),
+                nn.BatchNorm1d(self.model_cfg.SHARED_FC[k]),
+                nn.ReLU()
+            ])
+            pre_channel = self.model_cfg.SHARED_FC[k]
+
+            if k != self.model_cfg.SHARED_FC.__len__() - 1 and self.model_cfg.DP_RATIO > 0:
+                shared_fc_list.append(nn.Dropout(self.model_cfg.DP_RATIO))
+
+        self.shared_fc_layer = nn.Sequential(*shared_fc_list)
+
+        self.cls_layers = self.make_fc_layers(
+            input_channels=pre_channel, output_channels=self.num_class, fc_list=self.model_cfg.CLS_FC
+        )
+        self.reg_layers = self.make_fc_layers(
+            input_channels=pre_channel,
+            output_channels=self.box_coder.code_size * self.num_class,
+            fc_list=self.model_cfg.REG_FC
+        )
+
+        self.model_bc = FullyConnectedNN()
+
+        self.init_weights(weight_init='xavier')
+
+    def init_weights(self, weight_init='xavier'):
+        if weight_init == 'kaiming':
+            init_func = nn.init.kaiming_normal_
+        elif weight_init == 'xavier':
+            init_func = nn.init.xavier_normal_
+        elif weight_init == 'normal':
+            init_func = nn.init.normal_
+        else:
+            raise NotImplementedError
+
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d) or isinstance(m, nn.Conv1d):
+                if weight_init == 'normal':
+                    init_func(m.weight, mean=0, std=0.001)
+                else:
+                    init_func(m.weight)
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+        nn.init.normal_(self.reg_layers[-1].weight, mean=0, std=0.001)
+
+    def roi_grid_pool(self, batch_dict):
+        """
+        Args:
+            batch_dict:
+                batch_size:
+                rois: (B, num_rois, 7 + C)
+                point_coords: (num_points, 4)  [bs_idx, x, y, z]
+                point_features: (num_points, C)
+                point_cls_scores: (N1 + N2 + N3 + ..., 1)
+                point_part_offset: (N1 + N2 + N3 + ..., 3)
+        Returns:
+
+        """
+        # batch_size = batch_dict['batch_size']
+        batch_size = batch_dict['rois'].shape[0]
+        rois = batch_dict['rois']
+        point_coords = batch_dict['point_coords']
+        point_features = batch_dict['point_features']
+
+        point_features = point_features * batch_dict['point_cls_scores'].view(-1, 1)
+
+        global_roi_grid_points, local_roi_grid_points = self.get_global_grid_points_of_roi(
+            rois, grid_size=self.model_cfg.ROI_GRID_POOL.GRID_SIZE
+        )  # (BxN, 6x6x6, 3)
+        global_roi_grid_points = global_roi_grid_points.view(batch_size, -1, 3)  # (B, Nx6x6x6, 3)
+
+        xyz = point_coords[:, 1:4]
+        xyz_batch_cnt = xyz.new_zeros(batch_size).int()
+        batch_idx = point_coords[:, 0]
+        for k in range(batch_size):
+            xyz_batch_cnt[k] = (batch_idx == k).sum()
+
+        new_xyz = global_roi_grid_points.view(-1, 3)
+        new_xyz_batch_cnt = xyz.new_zeros(batch_size).int().fill_(global_roi_grid_points.shape[1])
+        pooled_points, pooled_features = self.roi_grid_pool_layer(
+            xyz=xyz.contiguous(),
+            xyz_batch_cnt=xyz_batch_cnt,
+            new_xyz=new_xyz,
+            new_xyz_batch_cnt=new_xyz_batch_cnt,
+            features=point_features.contiguous(),
+        )  # (M1 + M2 ..., C)
+
+        pooled_features = pooled_features.view(
+            -1, self.model_cfg.ROI_GRID_POOL.GRID_SIZE ** 3,
+            pooled_features.shape[-1]
+        )  # (BxN, 6x6x6, C)
+        return pooled_features
+
+    def get_global_grid_points_of_roi(self, rois, grid_size):
+        rois = rois.view(-1, rois.shape[-1])
+        batch_size_rcnn = rois.shape[0]
+
+        local_roi_grid_points = self.get_dense_grid_points(rois, batch_size_rcnn, grid_size)  # (B, 6x6x6, 3)
+        global_roi_grid_points = common_utils.rotate_points_along_z(
+            local_roi_grid_points.clone(), rois[:, 6]
+        ).squeeze(dim=1)
+        global_center = rois[:, 0:3].clone()
+        global_roi_grid_points += global_center.unsqueeze(dim=1)
+        return global_roi_grid_points, local_roi_grid_points
+
+    @staticmethod
+    def get_dense_grid_points(rois, batch_size_rcnn, grid_size):
+        faked_features = rois.new_ones((grid_size, grid_size, grid_size))
+        dense_idx = faked_features.nonzero()  # (N, 3) [x_idx, y_idx, z_idx]
+        dense_idx = dense_idx.repeat(batch_size_rcnn, 1, 1).float()  # (B, 6x6x6, 3)
+
+        local_roi_size = rois.view(batch_size_rcnn, -1)[:, 3:6]
+        roi_grid_points = (dense_idx + 0.5) / grid_size * local_roi_size.unsqueeze(dim=1) \
+                          - (local_roi_size.unsqueeze(dim=1) / 2)  # (B, 6x6x6, 3)
+        return roi_grid_points
+
+
+############################################################################################################
+############################################################################################################
+    def image_guided_generation(self, image_tensor, labels, image_tensor_S):
+
+        if image_tensor.shape[0] == 0 or image_tensor_S.shape[0] ==0:
+            return [], [], 0
+        
+        # for model_bc in model_bcs :
+        #     model_bc.eval()
+
+        # model_bc = self.model_bc
+        # model_bc.to("cuda")
+
+        bc_labels_t = torch.ones(image_tensor.size(0), 1).to(image_tensor.device)
+        bc_labels_s = torch.zeros(image_tensor_S.size(0), 1).to(image_tensor_S.device)
+        bc_labels = torch.cat((bc_labels_t, bc_labels_s))  # Shape: [256, 200]
+        bc_images = torch.cat((image_tensor, image_tensor_S))  # Shape: [256, 200]
+
+
+        min_val = torch.zeros((bc_images.shape[0], 1, 1), device=bc_images.device)
+        max_val = torch.zeros((bc_images.shape[0], 1, 1), device=bc_images.device)
+        for i in range(bc_images.shape[0]):
+            # mask = image_tensor[i, 0, :] !=0
+            min_val[i, 0, 0], _ = torch.min(bc_images[i, 0, :], dim=0, keepdim=True)
+            max_val[i, 0, 0], _ = torch.max(bc_images[i, 0, :], dim=0, keepdim=True)
+        
+        bc_normalized_tensor = (bc_images - min_val) / (max_val - min_val)
+
+        # for param in model_bc.parameters():
+        #     print(param[0:5, 0:5, 0])   
+        #     break
+        # Scale to range [-1, 1]
+        bc_normalized_image = bc_normalized_tensor * 2 - 1
+        normalized_image = bc_normalized_image[:image_tensor.size(0)]
+        # model_bc.train()
+        bc_logit = self.model_bc(bc_normalized_image.permute(0, 2, 1).detach())
+        loss = focal_loss(bc_logit.squeeze(-1),  bc_labels.float())
+        self.model_bc.eval()
+        # print(torch.sigmoid(self.model_bc(bc_normalized_image.permute(0, 2, 1).detach())))
+        mask_harsh_samples = (torch.sigmoid(self.model_bc(bc_normalized_image.permute(0, 2, 1).detach())[:image_tensor.size(0)])> 0.70).detach()
+
+        normalized_image_harsh = normalized_image[mask_harsh_samples.view(-1, )]
+        labels_harsh = labels[mask_harsh_samples.view(-1, )]
+        if normalized_image_harsh.shape[0] == 0:
+            return [], [], loss.item()
+
+
+        for model_diff in model_diffs :
+            model_diff.eval()
+
+
+
+        if normalized_image_harsh.shape[0] != 1:
+            a = torch.sigmoid(self.model_bc(normalized_image_harsh.permute(0, 2, 1).detach()))
+        noise = torch.randn_like(normalized_image_harsh)    
+        reverse = 0.5
+        xt_multi_cls = noise_scheduler.add_noise(original_samples = normalized_image_harsh.clone().detach(), noise =noise,  timesteps=torch.tensor([noise_scheduler.timesteps[int(len(noise_scheduler.timesteps)* reverse)]]))
+        g_image_multi_cls =normalized_image_harsh.clamp(-1, 1)
+        inference_timesteps = noise_scheduler.timesteps[int(-len(noise_scheduler.timesteps)*(1 - reverse)):]
+
+        xt_total_s = []
+        x_total_t = []
+        alphas = [0.0, 0.0, 0.0]
+
+        for cls in [1, 2, 3]:
+            indices = (labels_harsh == cls).nonzero(as_tuple=True)[0]
+            xt = xt_multi_cls[indices].clone()
+            g_image = g_image_multi_cls[indices].clone()
+            model_diff = model_diffs[cls-1]
+            # model_bc = model_bcs[cls-1]
+            if xt.shape[0] == 0 or xt.shape[0] == 1:
+                continue
+
+            for t in inference_timesteps:
+                # t = (torch.ones(normalized_image.shape[0]) * t).long().to(normalized_image.device)
+                xt = xt.requires_grad_()
+
+                model_output = model_diff(xt, t).sample
+                iteration_step = noise_scheduler.step(
+                    model_output, t, xt, eta=0
+                )
+                x_t_minus_one, pred_original = iteration_step.prev_sample, iteration_step.pred_original_sample
+                if g_image is not None and noise_scheduler.alphas_cumprod[t] !=0:
+                    mask1 = (((g_image != -1).detach()) * 1.0).float()
+                    mask2 = (((g_image == -1).detach()) * -1.0).float()
+                    pred_orig = pred_original * mask1 +  mask2
+                    difference = (g_image.detach() - pred_orig) 
+                    norm = torch.linalg.norm(difference)
+                    # norm_grad = torch.autograd.grad(outputs=norm, inputs=xt)[0] 
+                    self.model_bc.eval()  # Set model to evaluation mode
+                    target_score = torch.sigmoid(self.model_bc(pred_orig.permute(0, 2, 1)))
+                    alpha = alphas[cls-1]
+                    source_dist = torch.sum(target_score) 
+                    context = norm 
+
+                    if torch.mean(target_score) < 0.40:
+                        alpha = 0
+                        output = alpha * source_dist + (1.0 - alpha) * context
+                
+                    if t != 494 and torch.mean(target_score) >= 0.40:
+                        alpha = 1.0
+                        output = alpha * source_dist + (1.0 - alpha) * context
+
+
+                    if t==494:
+                        alpha = 10
+                        output = alpha * source_dist
+
+
+
+                    
+                    norm_grad = torch.autograd.grad(outputs= output, inputs=xt)[0] 
+                    # print(norm)
+                    # print(torch.mean(target_score))
+                    # print(output)
+                    # print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+
+                    x_t_minus_one = x_t_minus_one - 1.0 *  norm_grad
+                xt = x_t_minus_one
+                xt = xt.detach()
+
+            xt = xt.clamp(-1, 1)
+
+            # mask1 = (((g_image != -1).detach()) * 1.0).float()
+            # mask2 = (((g_image == -1).detach()) * -1.0).float()
+            # pred_orig = xt * mask1 +  mask2
+
+            # cnt=0
+            # while(torch.mean(torch.sigmoid(self.model_bc(pred_orig.permute(0, 2, 1))))) > 0.50:
+            #     cnt = cnt +1 
+            #     if cnt > 10:
+            #         break
+            #     xt = xt.requires_grad_()
+            #     mask1 = (((g_image != -1).detach()) * 1.0).float()
+            #     mask2 = (((g_image == -1).detach()) * -1.0).float()
+            #     pred_orig = xt * mask1 +  mask2
+            #     difference = (g_image.detach() - pred_orig) 
+            #     norm = torch.linalg.norm(difference)
+            #     target_score = torch.sigmoid(self.model_bc(pred_orig.permute(0, 2, 1)))
+
+            #     source_dist = torch.sum(target_score) 
+            #     context = norm 
+
+            #     output = 1.0 * source_dist + 0.0 * context
+            #     # print(torch.mean(torch.sigmoid(model_bc(pred_orig.permute(0, 2, 1)))))
+            #     xt = xt - 0.1 * torch.autograd.grad(outputs= output, inputs=xt)[0]
+            #     xt = xt.detach()
+                
+            xt = xt.clamp(-1, 1)
+            xt_total_s.append(xt.clone())
+            x_total_t.append(g_image.clone())
+            # print("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+            # print(torch.mean(torch.sigmoid(self.model_bc(pred_orig.permute(0, 2, 1)))))
+            # print("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+            # print("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+        # or  torch.mean(torch.sigmoid(self.model_bc(pred_orig.permute(0, 2, 1)))) > 0.5
+        if len(x_total_t) ==0 or  torch.mean(torch.sigmoid(self.model_bc(pred_orig.permute(0, 2, 1)))) > 0.6 :
+            return [], [], loss.item()
+        return torch.cat(x_total_t, dim=0), torch.cat(xt_total_s, dim=0), loss.item()
+
+
+
+
+
+#############################################################################################################
+#############################################################################################################
+
+    def forward(self, batch_dict):
+        """
+        :param input_data: input dict
+        :return:
+        """
+
+        targets_dict = self.proposal_layer(
+            batch_dict, nms_config=self.model_cfg.NMS_CONFIG['TRAIN' if self.training else 'TEST']
+        )
+
+        if self.training:
+            targets_dict = batch_dict.get('roi_targets_dict', None)
+            if targets_dict is None:
+                targets_dict = self.assign_targets(batch_dict)
+                batch_dict['rois'] = targets_dict['rois']
+                batch_dict['roi_labels'] = targets_dict['roi_labels']
+
+        # RoI aware pooling
+        pooled_features = self.roi_grid_pool(batch_dict)  # (BxN, 6x6x6, C)
+
+        grid_size = self.model_cfg.ROI_GRID_POOL.GRID_SIZE
+        batch_size_rcnn = pooled_features.shape[0]
+        pooled_features = pooled_features.permute(0, 2, 1).\
+            contiguous().view(batch_size_rcnn, -1, grid_size, grid_size, grid_size)  # (BxN, C, 6, 6, 6)
+
+        shared_features = self.shared_fc_layer(pooled_features.view(batch_size_rcnn, -1, 1))
+        rcnn_cls = self.cls_layers(shared_features).transpose(1, 2).contiguous().squeeze(dim=1)  # (B, 1 or 2)
+        rcnn_reg = self.reg_layers(shared_features).transpose(1, 2).contiguous().squeeze(dim=1)  # (B, C)
+
+        if not self.training:
+            batch_cls_preds, batch_box_preds = self.generate_predicted_boxes(
+                batch_size=batch_dict['batch_size'], rois=batch_dict['rois'], cls_preds=rcnn_cls, box_preds=rcnn_reg
+            )
+            batch_dict['batch_cls_preds'] = batch_cls_preds
+            batch_dict['batch_box_preds'] = batch_box_preds
+            batch_dict['cls_preds_normalized'] = False
+        else:
+            # targets_dict['rcnn_cls'] = rcnn_cls
+            # targets_dict['rcnn_reg'] = rcnn_reg
+            ########################################################################
+            targets_dict['rcnn_cls'] = rcnn_cls[0:targets_dict['gt_of_rois'].shape[0] * targets_dict['gt_of_rois'].shape[1]]
+            targets_dict['rcnn_reg'] = rcnn_reg[0:targets_dict['gt_of_rois'].shape[0] * targets_dict['gt_of_rois'].shape[1]]
+            ########################################################################
+            self.forward_ret_dict = targets_dict
+            ####################################################################################################
+            import torch
+            # print(shared_features[0, :, 0])
+            shared_features_diff = shared_features.permute(0, 2, 1)
+            # print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+            # print(shared_features_diff[0, 0, :])
+            num_source_samples = batch_dict['batch_size'] * 128
+            num_target_samples = shared_features.shape[0] - batch_dict['batch_size'] * 128
+            mask = (torch.sigmoid(rcnn_cls) >= 0.30).clone().detach()
+            mask_target = (torch.sigmoid(rcnn_cls[num_source_samples: ]) >= 0.3).clone().detach()
+            mask_source = (torch.sigmoid(rcnn_cls[ :num_source_samples]) >= 0.3).clone().detach()
+            shared_features_T = shared_features_diff[num_source_samples: ][mask_target.squeeze(-1), :, :]
+            shared_features_S_set = shared_features_diff[: num_source_samples][mask_source.squeeze(-1), :, :]
+            indices = torch.randperm(shared_features_S_set.size(0))[:torch.min(mask_source.sum(), mask_target.sum())]
+            shared_features_S = shared_features_S_set[indices].detach()
+            #################################################################################################
+            labels_T = (batch_dict['roi_labels'][batch_dict['batch_size']:, :].view(-1, )[mask_target.squeeze(-1)]).detach()
+            # labels = (batch_dict['roi_labels'].view(-1, )[mask.squeeze(-1)]).detach()
+            # weights = torch.ones(labels.shape[0], device=labels.device)
+            # indices_1 = (labels == 1).nonzero(as_tuple=True)[0]
+            # indices_2 = (labels == 2).nonzero(as_tuple=True)[0]
+            # indices_3 = (labels == 3).nonzero(as_tuple=True)[0]
+
+            shared_features_DA_pred, shared_features_DA_labels, bc_loss = self.image_guided_generation(shared_features_T, labels_T, shared_features_S)
+            self.forward_ret_dict['shared_features_DA_labels'] = shared_features_DA_labels
+            self.forward_ret_dict['shared_features_DA_pred'] = shared_features_DA_pred
+            self.forward_ret_dict['bc_loss'] = bc_loss
+            # else:
+                # self.forward_ret_dict['shared_features_DA_labels'] = []
+                # self.forward_ret_dict['shared_features_DA_pred'] = []
+
+
+
+        #################################### diffusion #########################################################
+        # import torch
+        # import os
+        # existing_files = os.listdir('/space/userfiles/khatouna/OpenPCDet_FS/data/roi_features/')
+        # numbers = []
+        # max_number = 0
+        # for file_name in existing_files:
+        #     if file_name.endswith('.pth'):
+        #         num_str = file_name[len('roi_'):-len('.pth')]
+        #         if num_str.isdigit():
+        #             numbers.append(int(num_str))
+        # if numbers:
+        #     max_number = max(numbers) +1
+
+        # mask_diff = torch.sigmoid(rcnn_cls.clone()) >=0.6
+        # good_roi_features = shared_features[mask_diff.squeeze(-1), :, :].clone().squeeze(-1).cpu()
+        # for i in range(good_roi_features.size(0)):  # Iterate over the 56 rows
+        #     row_tensor = good_roi_features[i]  # Extract the ith row, shape will be [256]
+        #     file_name = f'/space/userfiles/khatouna/OpenPCDet_FS/data/roi_features/roi_{max_number + i}.pth'  # Create a file name
+        #     torch.save(row_tensor, file_name)       
+        ########################################################################################################
+
+        return batch_dict
+        
+
+
+##############################################################################################
+##############################################################################################
+##############################################################################################
+##############################################################################################
+##############################################################################################
+##############################################################################################
+##############################################################################################
+##############################################################################################
+
+from dataclasses import dataclass
+from diffusers import UNet1DModel
+import torch
+from diffusers import DDIMScheduler
+from safetensors.torch import load_model
+import torch.nn as nn
+import torch.nn.functional as F
+
+def focal_loss(pred, target, alpha=0.25, gamma=2.0, reduction='mean'):
+    """
+    Focal Loss for binary classification.
+    
+    Args:
+        pred (torch.Tensor): Predictions from the model (logits or probabilities).
+        target (torch.Tensor): Ground truth labels (0 or 1).
+        alpha (float): Weighting factor for the class.
+        gamma (float): Focusing parameter to adjust the rate at which easy examples are down-weighted.
+        reduction (str): 'mean' or 'sum'. Specifies the method to reduce the loss.
+
+    Returns:
+        torch.Tensor: Computed focal loss.
+    """
+    # Apply sigmoid to get probabilities if input is logits
+    pred = torch.sigmoid(pred)
+    
+    # Compute binary cross entropy
+    bce_loss = F.binary_cross_entropy(pred, target, reduction='none')
+    
+    # Compute the weights
+    pt = torch.where(target == 1, pred, 1 - pred)
+    focal_weight = alpha * (1 - pt) ** gamma
+    
+    # Apply weighting to the BCE loss
+    focal_loss = focal_weight * bce_loss
+    
+    if reduction == 'mean':
+        return focal_loss.mean()
+    elif reduction == 'sum':
+        return focal_loss.sum()
+    else:
+        return focal_loss
+
+@dataclass
+class TrainingConfig:
+    image_size = 256  # the generated image resolution
+    train_batch_size = 64
+    eval_batch_size = 16  # how many images to sample during evaluation
+    num_epochs = 20
+    gradient_accumulation_steps = 1
+    learning_rate = 1e-4
+    lr_warmup_steps = 500
+    save_image_epochs = 10
+    save_model_epochs = 10
+    mixed_precision = "fp16"  # `no` for float32, `fp16` for automatic mixed precision
+    output_dir = "ddpm-hamed-256"  # the model name locally and on the HF Hub
+    hub_private_repo = False
+    overwrite_output_dir = True  # overwrite the old model when re-running the notebook
+    seed = 0
+
+config = TrainingConfig()
+
+
+
+# Create three instances of the model
+model_diff_1 = UNet1DModel(
+    in_channels=1,
+    out_channels=1,
+    extra_in_channels=16,
+    block_out_channels = (32, 32, 64, 64, 128, 128),
+    down_block_types=(
+        "DownBlock1DNoSkip", 
+        "AttnDownBlock1D",
+        "AttnDownBlock1D",
+        "AttnDownBlock1D",
+        "AttnDownBlock1D", 
+        "DownBlock1D",
+    ),
+    up_block_types=(
+        "UpBlock1D",  
+        "AttnUpBlock1D",  
+        "AttnUpBlock1D",
+        "AttnUpBlock1D",
+        "AttnUpBlock1D",
+        "UpBlock1DNoSkip",
+    )
+)
+
+model_diff_2 = UNet1DModel(
+    in_channels=1,
+    out_channels=1,
+    extra_in_channels=16,
+    block_out_channels = (32, 32, 64, 64, 128, 128),
+    down_block_types=(
+        "DownBlock1DNoSkip", 
+        "AttnDownBlock1D",
+        "AttnDownBlock1D",
+        "AttnDownBlock1D",
+        "AttnDownBlock1D", 
+        "DownBlock1D",
+    ),
+    up_block_types=(
+        "UpBlock1D",  
+        "AttnUpBlock1D",  
+        "AttnUpBlock1D",
+        "AttnUpBlock1D",
+        "AttnUpBlock1D",
+        "UpBlock1DNoSkip",
+    )
+)
+
+model_diff_3 = UNet1DModel(
+    in_channels=1,
+    out_channels=1,
+    extra_in_channels=16,
+    block_out_channels = (32, 32, 64, 64, 128, 128),
+    down_block_types=(
+        "DownBlock1DNoSkip", 
+        "AttnDownBlock1D",
+        "AttnDownBlock1D",
+        "AttnDownBlock1D",
+        "AttnDownBlock1D", 
+        "DownBlock1D",
+    ),
+    up_block_types=(
+        "UpBlock1D",  
+        "AttnUpBlock1D",  
+        "AttnUpBlock1D",
+        "AttnUpBlock1D",
+        "AttnUpBlock1D",
+        "UpBlock1DNoSkip",
+    )
+)
+
+
+
+class FullyConnectedNN(nn.Module):
+    def __init__(self, input_channels=256, output_channels=1, fc_list=None, dp_ratio=0.3):
+        super(FullyConnectedNN, self).__init__()
+        if fc_list is None:
+            fc_list = [256, 256]
+
+        fc_layers = []
+        pre_channel = input_channels
+        
+        for k in range(len(fc_list)):
+            fc_layers.extend([
+                nn.Conv1d(pre_channel, fc_list[k], kernel_size=1, bias=False),
+                nn.BatchNorm1d(fc_list[k]),
+                nn.ReLU()
+            ])
+            pre_channel = fc_list[k]
+            
+            if dp_ratio >= 0 and k == 0:
+                fc_layers.append(nn.Dropout(dp_ratio))
+        
+        fc_layers.append(nn.Conv1d(pre_channel, output_channels, kernel_size=1, bias=True))
+        self.fc_layers = nn.Sequential(*fc_layers)
+
+    def forward(self, x):
+        return self.fc_layers(x)
+
+
+model_bc_Car = FullyConnectedNN()
+model_bc_Pedestrian = FullyConnectedNN()
+model_bc_Bike = FullyConnectedNN()
+model_bc_Car.load_state_dict(torch.load('/space/userfiles/khatouna/OpenPCDet_FS/pcdet/Car_model_Adv_clss_epoch_40.pth'))
+model_bc_Pedestrian.load_state_dict(torch.load('/space/userfiles/khatouna/OpenPCDet_FS/pcdet/Pedestrian_model_Adv_clss_epoch_40.pth'))
+model_bc_Bike.load_state_dict(torch.load('/space/userfiles/khatouna/OpenPCDet_FS/pcdet/Bike_model_Adv_clss_epoch_40.pth'))
+# model_bc.load_state_dict(torch.load('/space/userfiles/khatouna/OpenPCDet_FS/pcdet/model_Adv_clss_epoch_40.pth'), weights_only=True)
+model_bc_Car = model_bc_Car.to("cuda")
+model_bc_Pedestrian = model_bc_Pedestrian.to("cuda")
+model_bc_Bike = model_bc_Bike.to("cuda")
+
+
+# optimizer = torch.optim.AdamW(model_diff.parameters(), lr=config.learning_rate)
+noise_scheduler = DDIMScheduler(num_train_timesteps=1000, beta_schedule = 'squaredcos_cap_v2', rescale_betas_zero_snr = True, timestep_spacing = "linspace" )
+noise_scheduler.set_timesteps(100)
+# args = (config, model_diff, noise_scheduler, optimizer)
+# safetensors_file = "/space/userfiles/khatouna/OpenPCDet_FS/ddpm-hamed-2561/unet/diffusion_pytorch_model.safetensors"
+safetensors_file = "/space/userfiles/khatouna/OpenPCDet_FS/ddpm_da/Car/unet/diffusion_pytorch_model.safetensors"
+load_model(model_diff_1, safetensors_file)
+model_diff_Car = model_diff_1.to("cuda")
+
+
+safetensors_file = "/space/userfiles/khatouna/OpenPCDet_FS/ddpm_da/Pedestrian/unet/diffusion_pytorch_model.safetensors"
+load_model(model_diff_2, safetensors_file)
+model_diff_Pedestrian = model_diff_2.to("cuda")
+
+safetensors_file = "/space/userfiles/khatouna/OpenPCDet_FS/ddpm_da/Bike/unet/diffusion_pytorch_model.safetensors"
+load_model(model_diff_3, safetensors_file)
+model_diff_Bike= model_diff_3.to("cuda")
+
+model_diffs = [model_diff_Car, model_diff_Pedestrian, model_diff_Bike]
+model_bcs = [model_bc_Car, model_bc_Pedestrian, model_bc_Bike]
+
+def image_guided_generation(image_tensor, labels, image_tensor_S):
+
+    if image_tensor.shape[0] == 0 or image_tensor_S.shape[0] ==0:
+        return [], [], 0
+    
+    # for model_bc in model_bcs :
+    #     model_bc.eval()
+
+    model_bc = FullyConnectedNN()
+    model_bc.to("cuda")
+
+    bc_labels_t = torch.ones(image_tensor.size(0), 1).to(image_tensor.device)
+    bc_labels_s = torch.zeros(image_tensor_S.size(0), 1).to(image_tensor_S.device)
+    bc_labels = torch.cat((bc_labels_t, bc_labels_s))  # Shape: [256, 200]
+    bc_images = torch.cat((image_tensor, image_tensor_S))  # Shape: [256, 200]
+
+
+    min_val = torch.zeros((bc_images.shape[0], 1, 1), device=bc_images.device)
+    max_val = torch.zeros((bc_images.shape[0], 1, 1), device=bc_images.device)
+    for i in range(bc_images.shape[0]):
+        # mask = image_tensor[i, 0, :] !=0
+        min_val[i, 0, 0], _ = torch.min(bc_images[i, 0, :], dim=0, keepdim=True)
+        max_val[i, 0, 0], _ = torch.max(bc_images[i, 0, :], dim=0, keepdim=True)
+    
+    bc_normalized_tensor = (bc_images - min_val) / (max_val - min_val)
+
+    # for param in model_bc.parameters():
+    #     print(param[0:5, 0:5, 0])   
+    #     break
+    # Scale to range [-1, 1]
+    bc_normalized_image = bc_normalized_tensor * 2 - 1
+    normalized_image = bc_normalized_image[:image_tensor.size(0)]
+    model_bc.train()
+    bc_logit = model_bc(bc_normalized_image.permute(0, 2, 1).detach())
+    loss = focal_loss(bc_logit.squeeze(-1),  bc_labels.float())
+    model_bc.eval()
+    # print(torch.sigmoid(model_bc(bc_normalized_image.permute(0, 2, 1).detach())))
+    mask_harsh_samples = (torch.sigmoid(model_bc(bc_normalized_image.permute(0, 2, 1).detach())[:image_tensor.size(0)])> 0.70).detach()
+
+    normalized_image_harsh = normalized_image[mask_harsh_samples.view(-1, )]
+    labels_harsh = labels[mask_harsh_samples.view(-1, )]
+    if normalized_image_harsh.shape[0] == 0:
+        return [], [], loss.item()
+
+
+    for model_diff in model_diffs :
+        model_diff.eval()
+
+
+
+    if normalized_image_harsh.shape[0] != 1:
+        a = torch.sigmoid(model_bc(normalized_image_harsh.permute(0, 2, 1).detach()))
+    noise = torch.randn_like(normalized_image_harsh)    
+    reverse = 0.5
+    xt_multi_cls = noise_scheduler.add_noise(original_samples = normalized_image_harsh.clone().detach(), noise =noise,  timesteps=torch.tensor([noise_scheduler.timesteps[int(len(noise_scheduler.timesteps)* reverse)]]))
+    g_image_multi_cls =normalized_image_harsh.clamp(-1, 1)
+    inference_timesteps = noise_scheduler.timesteps[int(-len(noise_scheduler.timesteps)*(1 - reverse)):]
+
+    xt_total_s = []
+    x_total_t = []
+    alphas = [0.1, 0.1, 0.05]
+
+    for cls in [1, 2, 3]:
+        indices = (labels_harsh == cls).nonzero(as_tuple=True)[0]
+        xt = xt_multi_cls[indices].clone()
+        g_image = g_image_multi_cls[indices].clone()
+        model_diff = model_diffs[cls-1]
+        # model_bc = model_bcs[cls-1]
+        if xt.shape[0] == 0 or xt.shape[0] == 1:
+            continue
+
+        for t in inference_timesteps:
+            # t = (torch.ones(normalized_image.shape[0]) * t).long().to(normalized_image.device)
+            xt = xt.requires_grad_()
+
+            model_output = model_diff(xt, t).sample
+            iteration_step = noise_scheduler.step(
+                model_output, t, xt, eta=0
+            )
+            x_t_minus_one, pred_original = iteration_step.prev_sample, iteration_step.pred_original_sample
+            if g_image is not None and noise_scheduler.alphas_cumprod[t] !=0:
+                mask1 = (((g_image != -1).detach()) * 1.0).float()
+                mask2 = (((g_image == -1).detach()) * -1.0).float()
+                pred_orig = pred_original * mask1 +  mask2
+                difference = (g_image.detach() - pred_orig) 
+                norm = torch.linalg.norm(difference)
+                # norm_grad = torch.autograd.grad(outputs=norm, inputs=xt)[0] 
+                model_bc.eval()  # Set model to evaluation mode
+                target_score = torch.sigmoid(model_bc(pred_orig.permute(0, 2, 1)))
+                alpha = alphas[cls-1]
+                if torch.mean(target_score) > 0.25:
+                    alpha = 0.7
+
+                source_dist = torch.sum(target_score) 
+                context = norm 
+
+                output = alpha * source_dist + (1.0 - alpha) * context
+                norm_grad = torch.autograd.grad(outputs= output, inputs=xt)[0] 
+                print(norm)
+                print(torch.mean(target_score))
+                print(output)
+                print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+
+                x_t_minus_one = x_t_minus_one - 1.0 *  norm_grad
+            xt = x_t_minus_one
+            xt = xt.detach()
+
+        xt = xt.clamp(-1, 1)
+
+        mask1 = (((g_image != -1).detach()) * 1.0).float()
+        mask2 = (((g_image == -1).detach()) * -1.0).float()
+        pred_orig = xt * mask1 +  mask2
+
+        cnt=0
+        while(torch.mean(torch.sigmoid(model_bc(pred_orig.permute(0, 2, 1))))) > 0.25:
+            cnt = cnt +1 
+            if cnt > 10:
+                break
+            xt = xt.requires_grad_()
+            mask1 = (((g_image != -1).detach()) * 1.0).float()
+            mask2 = (((g_image == -1).detach()) * -1.0).float()
+            pred_orig = xt * mask1 +  mask2
+            difference = (g_image.detach() - pred_orig) 
+            norm = torch.linalg.norm(difference)
+            target_score = torch.sigmoid(model_bc(pred_orig.permute(0, 2, 1)))
+
+            source_dist = torch.sum(target_score) 
+            context = norm 
+
+            output = 1.0 * source_dist + 0 * context
+            print(torch.mean(torch.sigmoid(model_bc(pred_orig.permute(0, 2, 1)))))
+            xt = xt - 1.0 * torch.autograd.grad(outputs= output, inputs=xt)[0]
+            xt = xt.detach()
+            
+        xt = xt.clamp(-1, 1)
+        xt_total_s.append(xt.clone())
+        x_total_t.append(g_image.clone())
+        print("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+        print(torch.mean(torch.sigmoid(model_bc(pred_orig.permute(0, 2, 1)))))
+        print("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+        print("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+    
+    if len(x_total_t) ==0 :
+        return [], [], loss.item()
+    return torch.cat(x_total_t, dim=0), torch.cat(xt_total_s, dim=0), loss.item()
+

@@ -14,7 +14,7 @@ class PointFeatureEncoder(object):
     def num_point_features(self):
         return getattr(self, self.point_encoding_config.encoding_type)(points=None)
 
-    def forward(self, data_dict):
+    def forward(self, data_dict, DA = False):
         """
         Args:
             data_dict:
@@ -26,10 +26,15 @@ class PointFeatureEncoder(object):
                 use_lead_xyz: whether to use xyz as point-wise features
                 ...
         """
-        data_dict['points'], use_lead_xyz = getattr(self, self.point_encoding_config.encoding_type)(
-            data_dict['points']
-        )
-        data_dict['use_lead_xyz'] = use_lead_xyz
+        if DA is False:
+            data_dict['points'], use_lead_xyz = getattr(self, self.point_encoding_config.encoding_type)(
+                data_dict['points']
+            )
+            data_dict['use_lead_xyz'] = use_lead_xyz
+        else:
+            data_dict['points_T'], _ = getattr(self, self.point_encoding_config.encoding_type)(
+                data_dict['points_T']
+            )            
        
         if self.point_encoding_config.get('filter_sweeps', False) and 'timestamp' in self.src_feature_list:
             max_sweeps = self.point_encoding_config.max_sweeps
